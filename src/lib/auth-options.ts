@@ -1,6 +1,7 @@
 import axios from "axios";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { API_KEY, BASE_URL } from "./env";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -19,33 +20,25 @@ export const authOptions: NextAuthOptions = {
 
       async authorize(credentials) {
         try {
-          //   const res = await axios.post(
-          //     `${BASE_URL}admins/login`,
-          //     {
-          //       password: credentials?.password,
-          //       username: credentials?.username,
-          //     },
-          //     {
-          //       headers: {
-          //         "x-api-key": `Key ${API_KEY}`,
-          //         "Content-Type": "application/json",
-          //         Accept: "application/json",
-          //       },
-          //     }
-          //   );
-          if (credentials?.email === "ghaisani.nurani@gmail.com" && credentials?.password === "kenzie123") {
-            return {
-              id: "1",
-              name: "Admin",
-              email: "admin@gmail.com",
-              role: "Admin",
-              token: "token",
-            };
+          const res = await axios.post(
+            `${BASE_URL}auth/login`,
+            {
+              password: credentials?.password,
+              email: credentials?.email,
+            },
+            {
+              headers: {
+                "x-api-key": `Key ${API_KEY}`,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+            }
+          );
+          if (res.status === 200) {
+            return res.data.payload;
           } else {
             throw new Error("CredentialsSignin");
           }
-
-          //   return res.data; // Return the user data if successful
         } catch (err: any) {
           if (err.response?.status === 401) {
             throw new Error("CredentialsSignin"); // Specific error for client-side handling
@@ -56,7 +49,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   pages: {
-    signIn: "/signin",
+    signIn: "/auth/login",
   },
   session: {
     strategy: "jwt",
@@ -64,7 +57,8 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async session({ session, token }) {
-      //   session.user.accessToken = token.data.token;
+      console.log("session", token);
+      session.user.access_token = token.access_token;
       //   const decoded = decodeJwt(session.user.accessToken);
       //   session.user.decoded = decoded;
       //   session.user.username = decoded?.AdminRole;
