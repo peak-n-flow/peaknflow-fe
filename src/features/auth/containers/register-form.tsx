@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { api } from "@/lib/axios";
 
 const registerFormSchema = z.object({
   name: z
@@ -24,23 +25,13 @@ const registerFormSchema = z.object({
     .min(2, { message: "Name must be at least 2 characters." })
     .max(50, { message: "Name must not exceed 50 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
-  phone: z
+  phone_number: z
     .string()
     .min(10, { message: "Phone number must be at least 10 digits." })
-    .regex(/^\d+$/, { message: "Phone number must contain only numbers." }),
+    .regex(/^\d+$/, { message: "Phone number must contain only digits." }),
   password: z
     .string()
     .min(8, { message: "Password must be at least 6 characters." }),
-  // .regex(/[A-Z]/, {
-  //   message: "Password must contain at least one uppercase letter.",
-  // })
-  // .regex(/[a-z]/, {
-  //   message: "Password must contain at least one lowercase letter.",
-  // })
-  // .regex(/[0-9]/, { message: "Password must contain at least one number." })
-  // .regex(/[^A-Za-z0-9]/, {
-  //   message: "Password must contain at least one special character.",
-  // }),
 });
 
 type RegisterFormValues = z.infer<typeof registerFormSchema>;
@@ -54,7 +45,7 @@ export default function RegisterForm() {
     defaultValues: {
       name: "",
       email: "",
-      phone: "",
+      phone_number: "",
       password: "",
     },
   });
@@ -63,18 +54,12 @@ export default function RegisterForm() {
     setIsLoading(true);
 
     try {
-      // Here you would typically call your API to register the user
-      // For example:
-      // const response = await fetch("/api/register", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(data),
-      // })
+      const formattedData = {
+        ...data,
+        phone_number: `+62${data.phone_number}`,
+      };
+      const response = await api.post("auth/register", formattedData);
 
-      // if (!response.ok) throw new Error("Registration failed")
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
       toast.success("Registration successful.");
       router.push("/auth/login");
     } catch (error) {
@@ -115,13 +100,22 @@ export default function RegisterForm() {
         />
         <FormField
           control={form.control}
-          name="phone"
+          name="phone_number"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Phone Number</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter your phone number" {...field} />
-              </FormControl>
+              <div className="flex gap-2 items-center">
+                <div className="">+62</div>
+                <FormControl>
+                  <Input
+                    placeholder="Enter your phone number"
+                    value={field.value}
+                    onChange={(e) =>
+                      field.onChange(e.target.value.replace(/\D/g, ""))
+                    }
+                  />
+                </FormControl>
+              </div>
               <FormMessage />
             </FormItem>
           )}
