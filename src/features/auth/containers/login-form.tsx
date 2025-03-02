@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { signIn } from "next-auth/react";
 const loginFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
   password: z.string().min(1, { message: "Password is required." }),
@@ -42,20 +43,21 @@ export default function LoginForm() {
     try {
       // Here you would typically call your API to authenticate the user
       // For example:
-      // const response = await fetch("/api/login", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(data),
-      // })
+      const response = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
 
       // if (!response.ok) throw new Error("Authentication failed")
 
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      toast.success("Login successful.");
-
-      router.push("/dashboard");
+      if (response?.ok) {
+        toast.success("Login successful.");
+        router.push("/booking");
+      }else{
+        throw response?.error
+      }
     } catch (error) {
       toast.error("Login failed. Please try again.");
     } finally {
