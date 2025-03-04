@@ -34,16 +34,10 @@ export const authOptions: NextAuthOptions = {
               },
             }
           );
-          if (res.status === 200) {
-            return res.data.payload;
-          } else {
-            throw new Error("CredentialsSignin");
-          }
+
+          return res.data.payload;
         } catch (err: any) {
-          if (err.response?.status === 401) {
-            throw new Error("CredentialsSignin"); // Specific error for client-side handling
-          }
-          throw new Error("An error occurred during authentication.");
+          throw new Error(err.response.data.payload.error);
         }
       },
     }),

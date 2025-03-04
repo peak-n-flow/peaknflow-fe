@@ -55,11 +55,15 @@ export default function LoginForm() {
       if (response?.ok) {
         toast.success("Login successful.");
         router.push("/booking");
-      }else{
-        throw response?.error
+      } else {
+        throw response?.error as string;
       }
     } catch (error) {
-      toast.error("Login failed. Please try again.");
+      const errorMessage =
+        typeof error === "string"
+          ? error
+          : "An error occurred. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +71,7 @@ export default function LoginForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 ">
         <FormField
           control={form.control}
           name="email"
