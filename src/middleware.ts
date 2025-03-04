@@ -5,4 +5,8 @@ export function mainMiddleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-export default withAuth(mainMiddleware, ["/dashboard", "/dashboard/:path*"]);
+export default withAuth(mainMiddleware, [
+  "/dashboard",
+  "/dashboard/:path*",
+  "/booking",
+]);

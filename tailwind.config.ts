@@ -21,12 +21,20 @@ export default {
     },
     extend: {
       fontSize: {
+        "display-xxl": [
+          "72px",
+          {
+            lineHeight: "72px",
+            letterSpacing: "-1.45px",
+            fontWeight: "300",
+          },
+        ],
         "display-lg": [
           "58px",
           {
             lineHeight: "69.6px",
             letterSpacing: "-1.45px",
-            fontWeight: "700",
+            fontWeight: "300",
           },
         ],
         "display-md": [
@@ -34,7 +42,7 @@ export default {
           {
             lineHeight: "62.4px",
             letterSpacing: "-1.3px",
-            fontWeight: "700",
+            fontWeight: "300",
           },
         ],
         "display-sm": [
@@ -42,7 +50,7 @@ export default {
           {
             lineHeight: "55.2px",
             letterSpacing: "-1.15px",
-            fontWeight: "700",
+            fontWeight: "300",
           },
         ],
         "display-xs": [
@@ -50,7 +58,7 @@ export default {
           {
             lineHeight: "43.2px",
             letterSpacing: "-0.9px",
-            fontWeight: "700",
+            fontWeight: "300",
           },
         ],
         h1: [
