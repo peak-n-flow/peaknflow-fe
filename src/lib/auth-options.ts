@@ -51,7 +51,6 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async session({ session, token }) {
-      console.log("session", token);
       session.user.access_token = token.access_token;
       //   const decoded = decodeJwt(session.user.accessToken);
       //   session.user.decoded = decoded;
