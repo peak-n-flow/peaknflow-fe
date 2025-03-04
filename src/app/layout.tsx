@@ -19,6 +19,10 @@ export const metadata: Metadata = {
   description: "Elevate Your Recovery & Fitness in a Private Space",
 };
 
+export const headers = {
+  "Cache-Control": "no-store, max-age=0",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
