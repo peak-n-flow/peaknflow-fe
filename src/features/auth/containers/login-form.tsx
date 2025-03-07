@@ -81,36 +81,56 @@ export default function LoginPage() {
           <FormField
             control={form.control}
             name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="Enter your email"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const hasError = !!form.formState.errors.email;
+              return (
+                <FormItem className="relative">
+                  <FormLabel
+                    className={`absolute left-3 top-1 text-xs ${
+                      hasError ? "text-danger-80" : "text-[#5C5A5A]"
+                    }`}
+                  >
+                    Email
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="Enter your email"
+                      {...field}
+                      className={`pt-6 ${hasError ? "border-danger-80 " : ""}`}
+                    />
+                  </FormControl>
+                  <FormMessage className="absolute right-3 top-0.5 text-danger-80 text-xs" />
+                </FormItem>
+              );
+            }}
           />
           <FormField
             control={form.control}
             name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="Enter your password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const hasError = !!form.formState.errors.password;
+              return (
+                <FormItem className="relative">
+                  <FormLabel
+                    className={`absolute left-3 top-1 text-xs ${
+                      hasError ? "text-danger-80" : "text-[#5C5A5A]"
+                    }`}
+                  >
+                    Password
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Create a password"
+                      {...field}
+                      className={`pt-6 ${hasError ? "border-danger-80 " : ""}`}
+                    />
+                  </FormControl>
+                  <FormMessage className="absolute right-3 top-0.5 text-danger-80 text-xs" />
+                </FormItem>
+              );
+            }}
           />
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Logging in..." : "Login"}

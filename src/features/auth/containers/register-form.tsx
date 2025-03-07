@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { api } from "@/lib/axios";
 import Image from "next/image";
 import Link from "next/link";
+import { getErrorMessage } from "@/lib/error";
 
 const registerFormSchema = z.object({
   name: z
@@ -66,7 +67,7 @@ export default function RegisterPage() {
       toast.success("Registration successful.");
       router.push("/auth/login");
     } catch (error) {
-      toast.error("Registration failed. Please try again.");
+      toast.error(getErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
@@ -85,72 +86,123 @@ export default function RegisterPage() {
           <FormField
             control={form.control}
             name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter your name" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const hasError = !!form.formState.errors.name;
+              return (
+                <FormItem className="relative">
+                  <FormLabel
+                    className={`absolute left-3 top-1 text-xs ${
+                      hasError ? "text-danger-80" : "text-[#5C5A5A]"
+                    }`}
+                  >
+                    Name
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your name"
+                      {...field}
+                      className={`pt-6 ${hasError ? "border-danger-80 " : ""}`}
+                    />
+                  </FormControl>
+                  <FormMessage className="absolute right-3 top-0.5 text-danger-80 text-xs" />
+                </FormItem>
+              );
+            }}
           />
+
           <FormField
             control={form.control}
             name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="Enter your email"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const hasError = !!form.formState.errors.email;
+              return (
+                <FormItem className="relative">
+                  <FormLabel
+                    className={`absolute left-3 top-1 text-xs ${
+                      hasError ? "text-danger-80" : "text-[#5C5A5A]"
+                    }`}
+                  >
+                    Email
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="Enter your email"
+                      {...field}
+                      className={`pt-6 ${hasError ? "border-danger-80 " : ""}`}
+                    />
+                  </FormControl>
+                  <FormMessage className="absolute right-3 top-0.5 text-danger-80 text-xs" />
+                </FormItem>
+              );
+            }}
           />
+
           <FormField
             control={form.control}
             name="phone_number"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Phone Number</FormLabel>
-                <div className="flex gap-2 items-center">
-                  <div className="flex-shrink-0">+62</div>
+            render={({ field }) => {
+              const hasError = !!form.formState.errors.phone_number;
+              return (
+                <FormItem className="relative pb-2">
+                  <FormLabel
+                    className={`absolute left-3 top-1 text-xs ${
+                      hasError ? "text-danger-80" : "text-[#5C5A5A]"
+                    }`}
+                  >
+                    Phone Number
+                  </FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter your phone number"
-                      value={field.value}
-                      onChange={(e) =>
-                        field.onChange(e.target.value.replace(/\D/g, ""))
-                      }
-                    />
+                    <div
+                      className={`flex items-center pt-6 border rounded-md ${
+                        hasError ? "border-red-500" : ""
+                      }`}
+                    >
+                      <span className="pl-3 text-gray-500">+62</span>
+                      <Input
+                        placeholder="Enter your phone number"
+                        value={field.value}
+                        onChange={(e) =>
+                          field.onChange(e.target.value.replace(/\D/g, ""))
+                        }
+                        className="border-0 focus:ring-0 focus:border-0"
+                      />
+                    </div>
                   </FormControl>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
+                  <FormMessage className="absolute right-3 top-0.5 text-danger-80 text-xs" />
+                </FormItem>
+              );
+            }}
           />
+
           <FormField
             control={form.control}
             name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="Create a password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const hasError = !!form.formState.errors.password;
+              return (
+                <FormItem className="relative">
+                  <FormLabel
+                    className={`absolute left-3 top-1 text-xs ${
+                      hasError ? "text-danger-80" : "text-[#5C5A5A]"
+                    }`}
+                  >
+                    Password
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Create a password"
+                      {...field}
+                      className={`pt-6 ${hasError ? "border-danger-80 " : ""}`}
+                    />
+                  </FormControl>
+                  <FormMessage className="absolute right-3 top-0.5 text-danger-80 text-xs" />
+                </FormItem>
+              );
+            }}
           />
+
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Registering..." : "Register"}
           </Button>
