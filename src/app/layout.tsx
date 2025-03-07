@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import MainProvider from "@/components/provider";
 import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,10 +18,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Peak & Flow",
   description: "Elevate Your Recovery & Fitness in a Private Space",
-};
-
-export const headers = {
-  "Cache-Control": "no-store, max-age=0",
+  icons:"/logo-nav.png",
 };
 
 export default function RootLayout({
@@ -36,6 +34,7 @@ export default function RootLayout({
         <MainProvider>
           <Navbar />
           {children}
+          <Footer />
         </MainProvider>
       </body>
     </html>
