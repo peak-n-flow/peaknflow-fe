@@ -63,11 +63,6 @@ export default function LoginPage() {
           ? error
           : "An error occurred. Please try again.";
       toast.error(errorMessage);
-      const errorMessage =
-        typeof error === "string"
-          ? error
-          : "An error occurred. Please try again.";
-      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
