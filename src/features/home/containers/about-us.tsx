@@ -120,7 +120,7 @@ export default function AboutUs() {
         <h2 ref={headingRef} className="">
           ABOUT US
         </h2>
-        <p ref={paragraphRef} className="text-h1 md:text-display-sm">
+        <p ref={paragraphRef} className="text-h4 md:text-display-xs">
           Wellness is more than just exercise. It is about balance, recovery,
           and feeling your best. We provide a truly private fitness and recovery
           experience designed to help you move, restore, and perform at your
@@ -149,7 +149,7 @@ export default function AboutUs() {
         </span>
         <h2
           ref={serviceHeadingRef}
-          className="text-h3 md:text-display-sm max-w-screen-xl"
+          className="text-h4 md:text-display-sm max-w-screen-xl"
         >
           Experience Private Recovery, Exclusive Training, and Mindful Movement
           for Your Optimal Well-being

@@ -114,7 +114,7 @@ export default function HowToReservation() {
     >
       <div className="container mx-auto grid grid-cols-1 2xl:grid-cols-[1fr,1fr] gap-10 lg:gap-16">
         <div className="flex flex-col gap-6 md:gap-8">
-          <span className="text-sm md:text-base uppercase tracking-wide text-white opacity-0 animate-fadeIn">
+          <span className="text-sm md:text-base uppercase tracking-wide text-white animate-fadeIn">
             HOW TO RESERVATIONS
           </span>
           <h1
