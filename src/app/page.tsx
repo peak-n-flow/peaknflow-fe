@@ -1,9 +1,15 @@
-import { authOptions } from "@/lib/auth-options";
-import { getServerSession } from "next-auth";
+import AboutUs from "@/features/home/containers/about-us";
+import Hero from "@/features/home/containers/hero";
+import HowToReservation from "@/features/home/containers/reservation";
+import StackingSection from "@/features/home/containers/stacking-section";
 
 export default async function Home() {
-  const session = await getServerSession(authOptions);
-  console.log(session);
-
-  return <main>{JSON.stringify(session)}</main>;
+  return (
+    <>
+      <Hero />
+      <AboutUs />
+      <StackingSection />
+      <HowToReservation />
+    </>
+  );
 }

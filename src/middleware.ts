@@ -9,4 +9,8 @@ export function mainMiddleware(request: NextRequest) {
   return response;
 }
 
-export default withAuth(mainMiddleware, ["/dashboard", "/dashboard/:path*"]);
+export default withAuth(mainMiddleware, [
+  "/dashboard",
+  "/dashboard/:path*",
+  "/booking",
+]);
