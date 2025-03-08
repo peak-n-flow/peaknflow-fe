@@ -71,7 +71,7 @@ export default function LoginPage() {
   return (
     <div className="flex bg-white rounded-2xl px-4 md:px-10 py-10 md:py-20 flex-col justify-center space-y-6 min-w-72 sm:min-w-88 md:min-w-[440px] xl:min-w-[480px] 2xl:min-w-[520px] w-full xl:w-fit my-16 md:my-0 z-20">
       <div className="flex flex-col space-y-2 text-center">
-        <h1 className="text-h1 font-medium">Login Account</h1>
+        <h1 className="text-h1 font-medium text-black">Login Account</h1>
         <p className="text-body-lg text-light-100">
           Enter your details below to login
         </p>
