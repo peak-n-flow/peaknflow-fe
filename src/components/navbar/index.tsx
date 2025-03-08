@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import Image from "next/image";
 import { Button } from "../ui/button";
+import { disableNavbarFooter } from "@/lib/disable";
 
 const Navbar = () => {
   const [showNavbar, setShowNavbar] = useState(true);
@@ -13,7 +14,6 @@ const Navbar = () => {
   const [isTop, setIsTop] = useState(true);
   const pathname = usePathname();
   const [isSaleOpen, setIsSaleOpen] = useState(true);
-  const disableNavbar = ["/auth/login", "/auth/register", "auth/logout"];
 
   const closeSale = () => {
     setIsSaleOpen(false);
@@ -45,7 +45,7 @@ const Navbar = () => {
   ];
 
   return (
-    !disableNavbar.includes(pathname) && (
+    !disableNavbarFooter.includes(pathname) && (
       <>
         <header
           className={`fixed top-0 w-full z-50 transition-transform duration-500 ${
