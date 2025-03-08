@@ -112,10 +112,10 @@ export default function Hero() {
       >
         {splitTextIntoSpans(headingText)}
       </h1>
-      <div className="hidden xl:block container relative -bottom-[20vh]">
+      <div className="hidden xl:block container relative -bottom-[10vh] 2xl:-bottom-[20vh]">
         <h1
           ref={headingDesktopRef}
-          className="hidden xl:block absolute left-0 text-display-lg text-center md:text-start md:text-display-xxl z-20 text-white max-w-3xl"
+          className="hidden xl:block absolute text-display-xs xl:text-display-lg text-center md:text-start md:text-display-xxl z-20 text-white max-w-3xl"
         >
           {desktopHeadingLines.map((line, i) => (
             <React.Fragment key={i}>
