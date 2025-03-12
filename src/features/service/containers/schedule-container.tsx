@@ -1,93 +1,43 @@
 "use client";
-import { addDays, format, startOfWeek } from "date-fns";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import BookingModal from "../components/booking-modal";
 import useSession from "@/features/auth/hooks/use-session";
-interface Booking {
-  id: string;
-  date: string;
-  time: string;
-  label: string;
-  name: string;
-  notes?: string;
-}
+import { addDays, format, parseISO, startOfWeek } from "date-fns";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import BookingModal from "../components/booking-modal";
+import Calendar from "../components/calendar";
+import useSchedule from "../hooks/use-schedule";
+import type { Booking } from "../types";
+
 export default function ScheduleContainer() {
-  const [startDate, setStartDate] = useState(() => {
-    const today = new Date();
-    return startOfWeek(today, { weekStartsOn: 1 }); // Start from Monday
-  });
+  const { data: schedules } = useSchedule({ id: "01JP0JKHBFEBJD3QMYEDDWQB5Z" });
+  const [startDate, setStartDate] = useState(() =>
+    startOfWeek(new Date(), { weekStartsOn: 1 })
+  );
+  const [timeSlots, setTimeSlots] = useState<string[]>([]);
 
-  // Function to navigate to previous week
-  const goToPreviousWeek = () => {
-    setStartDate((prev) => addDays(prev, -4));
-  };
+  useEffect(() => {
+    if (schedules?.gym) {
+      const openAt = parseISO(schedules.gym.open_at).getUTCHours();
+      const closeAt = parseISO(schedules.gym.close_at).getUTCHours();
+      const slots = [];
 
-  // Function to navigate to next week
-  const goToNextWeek = () => {
-    setStartDate((prev) => addDays(prev, 4));
-  };
+      for (let hour = openAt; hour < closeAt; hour++) {
+        slots.push(`${hour.toString().padStart(2, "0")}:00`);
+      }
 
+      setTimeSlots(slots);
+    }
+  }, [schedules?.gym]);
+
+  const goToPreviousWeek = () => setStartDate((prev) => addDays(prev, -4));
+  const goToNextWeek = () => setStartDate((prev) => addDays(prev, 4));
   const dateRange = Array.from({ length: 4 }, (_, i) => addDays(startDate, i));
 
-  const timeSlots = Array.from({ length: 9 }, (_, i) => {
-    const hour = i + 5;
-    return `${hour.toString().padStart(2, "0")}:00`;
-  });
-  const [bookings, setBookings] = useState<Booking[]>([
-    {
-      id: "1",
-      date: "2025-03-08",
-      time: "06:00",
-      label: "Fitness",
-      name: "John Doe",
-    },
-    {
-      id: "2",
-      date: "2025-03-08",
-      time: "07:00",
-      label: "Fitness",
-      name: "Jane Smith",
-    },
-    {
-      id: "3",
-      date: "2025-03-08",
-      time: "08:00",
-      label: "Yoga",
-      name: "Alex Johnson",
-    },
-    {
-      id: "4",
-      date: "2025-03-06",
-      time: "06:00",
-      label: "Fitness",
-      name: "Sam Wilson",
-    },
-    {
-      id: "5",
-      date: "2025-03-06",
-      time: "07:00",
-      label: "Fitness",
-      name: "Maria Garcia",
-    },
-  ]);
-  const getBooking = (dateStr: string, time: string) => {
-    return bookings.find(
-      (booking) => booking.date === dateStr && booking.time === time
-    );
-  };
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
     setSelectedSlot(null);
   };
+
   const handleSelectTimeSlot = (date: Date, time: string) => {
     // Parse the time string to get hours
     const [hours] = time.split(":").map(Number);
@@ -105,30 +55,15 @@ export default function ScheduleContainer() {
     // Open the booking dialog
     setIsDialogOpen(true);
   };
+
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const handleConfirmBooking = (name: string, notes: string) => {
     if (!selectedSlot) return;
 
-    // Parse the selected slot to get date and time
-    const date = new Date(selectedSlot);
-    const dateStr = format(date, "yyyy-MM-dd");
-    const timeStr = format(date, "HH:mm");
-
-    // Create a new booking
-    const newBooking: Booking = {
-      id: Date.now().toString(),
-      date: dateStr,
-      time: timeStr,
-      label: "Fitness", // Default label
-      name,
-      notes: notes || undefined,
-    };
-
-    // Add the new booking
-    setBookings((prev) => [...prev, newBooking]);
-
-    // Close the dialog and reset selection
+    // In a real implementation, you would call an API to create a booking
+    // For now, we'll just close the dialog
     setIsDialogOpen(false);
     setSelectedSlot(null);
   };
@@ -142,12 +77,18 @@ export default function ScheduleContainer() {
         <p className="text-h4 md:text-display-sm max-w-2xl">
           Select Your Preferred Date and Time for a Seamless Experience
         </p>
+        {schedules?.gym && (
+          <p className="text-sm text-muted-foreground">
+            Gym Hours: {format(parseISO(schedules.gym.open_at), "HH:mm")} -{" "}
+            {format(parseISO(schedules.gym.close_at), "HH:mm")}
+          </p>
+        )}
       </div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-xl font-semibold"></h1>
         <div className="flex items-center gap-4">
           <div className="text-display-sm italic">
-            {format(startDate, "MMMM, d")}-{format(addDays(startDate, 4), "d")}
+            {format(startDate, "MMMM, d")}-{format(addDays(startDate, 3), "d")}
           </div>
           <div className="flex gap-2">
             <button onClick={goToPreviousWeek} className="p-1 rounded-full ">
@@ -159,70 +100,18 @@ export default function ScheduleContainer() {
           </div>
         </div>
       </div>
-      {/* Schedule table */}
-      <div className="overflow-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-secondary-60 bg-transparent">
-              {dateRange.map((date, index) => (
-                <TableHead
-                  key={index}
-                  className=" border border-secondary-60 text-center text-white md:text-h4 h-20 md:h-36"
-                >
-                  {format(date, "EEE, MMM d")}
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {timeSlots.map((time) => (
-              <TableRow
-                key={time}
-                className="border-secondary-60 bg-transparent"
-              >
-                {/* <TableCell className="border-r border-secondary-60 text-center  font-medium">
-                  {time}
-                </TableCell> */}
-                {dateRange.map((date, dateIndex) => {
-                  const dateStr = format(date, "yyyy-MM-dd");
-                  const booking = getBooking(dateStr, time);
-
-                  return (
-                    <TableCell
-                      key={dateIndex}
-                      onClick={() =>
-                        !booking && handleSelectTimeSlot(date, time)
-                      }
-                      className={`
-                            border border-secondary-60 
-                            p-6 h-20 md:h-36 md:text-h1 text-center md:text-start
-                            
-                            ${
-                              !booking
-                                ? "cursor-pointer hover:bg-primary-80"
-                                : "cursor-default bg:primary-100"
-                            }
-                          `}
-                    >
-                      {time}
-                      {/* {booking && (
-                        <div className="absolute inset-0 flex items-center justify-center ">
-                          <div className="text-xs text-white">
-                            <div>• {booking.label}</div>
-                            <div className="mt-1 text-gray-400">
-                              {booking.name}
-                            </div>
-                          </div>
-                        </div>
-                      )} */}
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+      <Calendar
+        bookings={
+          isLoading
+            ? {}
+            : (schedules?.service_bookings as unknown as {
+                [key: string]: Booking[];
+              }) || {}
+        }
+        dateRange={dateRange}
+        timeSlots={timeSlots}
+        onSelectTimeSlot={handleSelectTimeSlot}
+      />
       <BookingModal
         open={isDialogOpen}
         selectedSlot={selectedSlot}

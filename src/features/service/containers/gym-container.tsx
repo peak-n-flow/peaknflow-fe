@@ -22,6 +22,7 @@ export default async function GymContainer() {
     },
   ];
   //   const session = await GET;
+  
   return (
     <>
       <HeroService
