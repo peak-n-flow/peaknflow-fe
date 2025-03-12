@@ -3,7 +3,7 @@ import { AxiosError } from "axios";
 export function getErrorMessage(error: unknown): string {
   if (error instanceof AxiosError) {
     return (
-      error.response?.data?.payload?.error ??
+      error.response?.data?.payload?.error.message ??
       "An error occurred. Please try again."
     );
   }
