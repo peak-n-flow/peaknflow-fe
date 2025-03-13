@@ -14,7 +14,7 @@ const getSchedule = async (serviceType: string) => {
 
 const createTransaction = async (request: TransactionRequest) => {
   try {
-    const response = await fetch(`/api/service-transactions/charge`, {
+    const response = await fetch(`/api/services/transactions`, {
       method: "POST",
       body: JSON.stringify(request),
     });
@@ -24,4 +24,4 @@ const createTransaction = async (request: TransactionRequest) => {
   }
 };
 
-export { getSchedule };
+export { getSchedule, createTransaction };

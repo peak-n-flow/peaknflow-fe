@@ -19,16 +19,26 @@ export function getTimeSlotWithStatus(
   bookings: { [key: string]: Booking[] }
 ) {
   const apiDateFormat = `${dateStr}T00:00:00Z`;
-  const bookingsForDate = bookings?.[apiDateFormat] || [];
+
+
+  const bookingsForDate = bookings[apiDateFormat] || [];
+  console.log("Bookings for date:", bookingsForDate);
+
   const [hours] = time.split(":").map(Number);
 
-  const slotStartUTC = new Date(`${dateStr}T${hours}:00:00Z`);
-  const slotEndUTC = new Date(`${dateStr}T${hours + 1}:00:00Z`);
+  const slotTime = `${dateStr}T${hours.toString().padStart(2, "0")}:00:00Z`;
+  console.log("Checking time slot:", slotTime);
 
-  return bookingsForDate.find((booking: Booking) => {
+  for (const booking of bookingsForDate) {
+    console.log("Comparing with booking:", booking);
     const bookingStart = new Date(booking.start_at);
     const bookingEnd = new Date(booking.end_at);
+    const slotDateTime = new Date(slotTime);
 
-    return slotStartUTC >= bookingStart && slotStartUTC < bookingEnd;
-  });
+    if (slotDateTime >= bookingStart && slotDateTime < bookingEnd) {
+      return booking;
+    }
+  }
+
+  return null;
 }

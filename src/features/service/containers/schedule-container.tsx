@@ -5,15 +5,19 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import BookingModal from "../components/booking-modal";
 import Calendar from "../components/calendar";
-import useSchedule from "../hooks/use-schedule";
-import type { Booking } from "../types";
+import type { Booking, TransactionRequest } from "../types";
+import { useSession as UseNextAuthSession } from "next-auth/react";
+import { useSchedule } from "../hooks/use-schedule";
+import useCreateTransaction from "../hooks/use-create-transaction";
 
 export default function ScheduleContainer() {
-  const { data: schedules } = useSchedule({ id: "01JP0JKHBFEBJD3QMYEDDWQB5Z" });
+  const { data: schedules } = useSchedule({ serviceType: "gym" });
   const [startDate, setStartDate] = useState(() =>
-    startOfWeek(new Date(), { weekStartsOn: 1 })
+    startOfWeek(new Date(), { weekStartsOn: 3 })
   );
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
+  const { status } = UseNextAuthSession();
+  const createTransaction = useCreateTransaction();
 
   useEffect(() => {
     if (schedules?.gym) {
@@ -47,10 +51,9 @@ export default function ScheduleContainer() {
     selectedDate.setHours(hours, 0, 0, 0);
 
     // Format the date in the required format (ISO with timezone)
-    const formattedDate = selectedDate.toISOString().replace("Z", "+07:00");
 
     // Set the selected slot
-    setSelectedSlot(formattedDate);
+    setSelectedSlot(selectedDate.toISOString());
 
     // Open the booking dialog
     setIsDialogOpen(true);
@@ -59,16 +62,27 @@ export default function ScheduleContainer() {
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleConfirmBooking = (name: string, notes: string) => {
+  const handleConfirmBooking = (request: TransactionRequest) => {
     if (!selectedSlot) return;
 
-    // In a real implementation, you would call an API to create a booking
-    // For now, we'll just close the dialog
-    setIsDialogOpen(false);
-    setSelectedSlot(null);
+    // Mutate with the transaction request
+    createTransaction.mutate(request, {
+      onSuccess: () => {
+        // Handle success - close dialog and reset state
+        setIsDialogOpen(false);
+        setSelectedSlot(null);
+      },
+      onError: (error) => {
+        // You could add error handling here if needed
+        console.error("Transaction error:", error);
+        // Still close the dialog but you might want different behavior
+        setIsDialogOpen(false);
+        setSelectedSlot(null);
+      },
+    });
   };
 
-  const { data, isLoading, error } = useSession();
+  const { data, isLoading } = useSession();
 
   return (
     <section className="container flex flex-col gap-16 md:gap-24 py-10 md:py-20">
@@ -100,6 +114,7 @@ export default function ScheduleContainer() {
           </div>
         </div>
       </div>
+      <p className="text-white">{JSON.stringify(data)}</p>
       <Calendar
         bookings={
           isLoading
@@ -117,7 +132,7 @@ export default function ScheduleContainer() {
         selectedSlot={selectedSlot}
         onClose={handleCloseDialog}
         onConfirm={handleConfirmBooking}
-        user={data}
+        user={!isLoading && status === "authenticated" ? data.user : null}
       />
     </section>
   );

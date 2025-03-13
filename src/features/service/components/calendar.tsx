@@ -52,6 +52,16 @@ export default function Calendar({
                     time,
                     bookings
                   );
+                  if (booking) {
+                    console.log(
+                      "Found booking for",
+                      dateStr,
+                      time,
+                      "Status:",
+                      booking.status
+                    );
+                  }
+
                   const isSlotSelectable =
                     !booking || booking.status === "booked";
 

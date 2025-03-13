@@ -17,3 +17,13 @@ export interface Booking {
   end_at: string;
   status: "booked" | "closed";
 }
+
+export interface TransactionRequest {
+  service_id: string;
+  start_at: string;
+  end_at: string;
+  payment_method: string;
+  user_name: string;
+  user_email: string;
+  user_phone_number: string;
+}
