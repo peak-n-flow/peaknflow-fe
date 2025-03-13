@@ -3,17 +3,17 @@ import { getSchedule } from "../service";
 import { BookingListResponse } from "../types";
 
 const useSchedule = ({
-  id,
   startDate,
   endDate,
+  serviceType,
 }: {
-  id: string;
   startDate?: string;
   endDate?: string;
+  serviceType: string;
 }) => {
   return useQuery<BookingListResponse>({
     queryKey: ["schedule"],
-    queryFn: () => getSchedule(id),
+    queryFn: () => getSchedule(serviceType),
     refetchInterval: 1000 * 60 * 5, // Refetch every 1 minutes
   });
 };

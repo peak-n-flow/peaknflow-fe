@@ -5,7 +5,6 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const response = await api.get("/auth/session");
-    console.log(response.data.payload);
     return NextResponse.json(response.data.payload as User);
   } catch (error) {
     return NextResponse.json({

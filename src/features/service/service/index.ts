@@ -1,11 +1,23 @@
 import { getErrorMessage } from "@/lib/error";
-import { BookingListResponse } from "../types";
+import { BookingListResponse, TransactionRequest } from "../types";
+import { getId } from "@/lib/get-id";
 
-const getSchedule = async (id: string) => {
+const getSchedule = async (serviceType: string) => {
+  const serviceId = getId(serviceType);
   try {
-    const response = await fetch(
-      `/api/services/01JP0JKHBFEBJD3QMYEDDWQB5Z/bookings`
-    );
+    const response = await fetch(`/api/services/${serviceId}/bookings`);
+    return response.json();
+  } catch (error) {
+    return getErrorMessage(error);
+  }
+};
+
+const createTransaction = async (request: TransactionRequest) => {
+  try {
+    const response = await fetch(`/api/service-transactions/charge`, {
+      method: "POST",
+      body: JSON.stringify(request),
+    });
     return response.json();
   } catch (error) {
     return getErrorMessage(error);
