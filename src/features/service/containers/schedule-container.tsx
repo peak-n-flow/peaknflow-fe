@@ -12,8 +12,8 @@ import useCreateTransaction from "../hooks/use-create-transaction";
 import { useSchedule } from "../hooks/use-schedule";
 import type { Booking, TransactionRequest } from "../types";
 
-export default function ScheduleContainer() {
-  const { data: schedules } = useSchedule({ serviceType: "gym" });
+export default function ScheduleContainer({ type }: { type: string }) {
+  const { data: schedules } = useSchedule({ serviceType: type });
   const [startDate, setStartDate] = useState(() =>
     startOfWeek(new Date(), { weekStartsOn: 3 })
   );
@@ -39,19 +39,10 @@ export default function ScheduleContainer() {
   };
 
   const handleSelectTimeSlot = (date: Date, time: string) => {
-    // Parse the time string to get hours
     const [hours] = time.split(":").map(Number);
-
-    // Create a new date with the selected time
     const selectedDate = new Date(date);
     selectedDate.setHours(hours, 0, 0, 0);
-
-    // Format the date in the required format (ISO with timezone)
-
-    // Set the selected slot
     setSelectedSlot(selectedDate.toISOString());
-
-    // Open the booking dialog
     setIsDialogOpen(true);
   };
 
@@ -61,17 +52,13 @@ export default function ScheduleContainer() {
   const handleConfirmBooking = (request: TransactionRequest) => {
     if (!selectedSlot) return;
 
-    // Mutate with the transaction request
     createTransaction.mutate(request, {
       onSuccess: () => {
-        // Handle success - close dialog and reset state
         setIsDialogOpen(false);
         setSelectedSlot(null);
       },
       onError: (error) => {
-        // You could add error handling here if needed
         console.error("Transaction error:", error);
-        // Still close the dialog but you might want different behavior
         setIsDialogOpen(false);
         setSelectedSlot(null);
       },
@@ -87,15 +74,15 @@ export default function ScheduleContainer() {
         <p className="text-h4 md:text-display-sm max-w-2xl">
           Select Your Preferred Date and Time for a Seamless Experience
         </p>
-        {schedules?.gym && (
+        {/* {schedules?.gym && (
           <p className="text-sm text-muted-foreground">
             Gym Hours: {formatJakartaTime(schedules.gym.open_at, "HH:mm")} -{" "}
             {formatJakartaTime(schedules.gym.close_at, "HH:mm")}
           </p>
-        )}
+        )} */}
       </div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-xl font-semibold"></h1>
+        <div className="text-display-sm italic">WIB GMT+7</div>{" "}
         <div className="flex items-center gap-4">
           <div className="text-display-sm italic">
             {format(startDate, "MMMM, d")}-{format(addDays(startDate, 3), "d")}
@@ -110,7 +97,6 @@ export default function ScheduleContainer() {
           </div>
         </div>
       </div>
-      <p className="text-white">{JSON.stringify(data)}</p>
       <Calendar
         bookings={
           isLoading
