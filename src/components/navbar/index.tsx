@@ -22,6 +22,12 @@ const Navbar = () => {
   };
 
   useEffect(() => {
+    setIsMobileDropdownOpen(false);
+    setIsMobileMenuOpen(false);
+    setIsServiceDropdownOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
@@ -109,7 +115,7 @@ const Navbar = () => {
                       Recovery
                     </Link>
                     <Link
-                      href="/yoga"
+                      href="/service/yoga"
                       className="block px-4 py-2 text-light-20 hover:bg-gray-200"
                     >
                       Yoga
@@ -191,7 +197,7 @@ const Navbar = () => {
                     </li>
                     <li>
                       <Link
-                        href="/yoga"
+                        href="/service/yoga"
                         className="block text-light-20 hover:text-primary-40"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
