@@ -38,6 +38,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { TransactionRequest } from "../types";
 import { SERVICE_GYM_ID } from "@/lib/env";
 import useCreateTransaction from "../hooks/use-create-transaction";
+import { formatJakartaTime, localToUTC } from "@/lib/date";
 
 const bookingFormSchema = z.object({
   name: z
@@ -96,19 +97,17 @@ export default function BookingModal({
 
   if (!selectedSlot) return null;
 
-  // Parse the ISO string to display a readable date and time
+  const formattedDate = formatJakartaTime(selectedSlot, "EEEE, MMMM d, yyyy");
+  const formattedTime = formatJakartaTime(selectedSlot, "h:mm a");
   const date = new Date(selectedSlot);
-  const formattedDate = format(date, "EEEE, MMMM d, yyyy");
-  const formattedTime = format(date, "h:mm a");
-
 
   const onSubmit = async (values: BookingFormValues) => {
     const transactionRequest: TransactionRequest = {
       service_id: SERVICE_GYM_ID ?? "",
       start_at: new Date(selectedSlot).toISOString().replace(/\.\d{3}Z$/, "Z"),
-      end_at: new Date(date.getTime() + values.hour * 60 * 60 * 1000)
-        .toISOString()
-        .replace(/\.\d{3}Z$/, "Z"),
+      end_at: localToUTC(
+        new Date(date.getTime() + values.hour * 60 * 60 * 1000)
+      ),
       payment_method: values.payment_method,
       user_name: values.name,
       user_email: values.email,

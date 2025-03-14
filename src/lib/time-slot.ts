@@ -1,12 +1,21 @@
 import { Booking } from "@/features/service/types";
 import { parseISO } from "date-fns";
+import { toZonedTime, fromZonedTime } from "date-fns-tz";
+import { JAKARTA_TIMEZONE } from "./date";
 
 export function generateTimeSlots(gym: Gym) {
-  const openAt = parseISO(gym.open_at).getUTCHours();
-  const closeAt = parseISO(gym.close_at).getUTCHours();
+  const openAtUTC = parseISO(gym.open_at);
+  const closeAtUTC = parseISO(gym.close_at);
+
+  const openAtJakarta = toZonedTime(openAtUTC, JAKARTA_TIMEZONE);
+  const closeAtJakarta = toZonedTime(closeAtUTC, JAKARTA_TIMEZONE);
+
+  const openHour = openAtJakarta.getHours();
+  const closeHour = closeAtJakarta.getHours();
+
   const slots = [];
 
-  for (let hour = openAt; hour < closeAt; hour++) {
+  for (let hour = openHour; hour < closeHour; hour++) {
     slots.push(`${hour.toString().padStart(2, "0")}:00`);
   }
 
@@ -20,25 +29,25 @@ export function getTimeSlotWithStatus(
 ) {
   const apiDateFormat = `${dateStr}T00:00:00Z`;
 
-
   const bookingsForDate = bookings[apiDateFormat] || [];
-  console.log("Bookings for date:", bookingsForDate);
 
   const [hours] = time.split(":").map(Number);
 
-  const slotTime = `${dateStr}T${hours.toString().padStart(2, "0")}:00:00Z`;
-  console.log("Checking time slot:", slotTime);
+  const jakartaDate = new Date(
+    `${dateStr}T${hours.toString().padStart(2, "0")}:00:00`
+  );
+
+  const utcDate = fromZonedTime(jakartaDate, JAKARTA_TIMEZONE);
+  const slotTimeUTC = utcDate.toISOString();
 
   for (const booking of bookingsForDate) {
-    console.log("Comparing with booking:", booking);
     const bookingStart = new Date(booking.start_at);
     const bookingEnd = new Date(booking.end_at);
-    const slotDateTime = new Date(slotTime);
+    const slotDateTime = new Date(slotTimeUTC);
 
     if (slotDateTime >= bookingStart && slotDateTime < bookingEnd) {
       return booking;
     }
   }
-
   return null;
 }

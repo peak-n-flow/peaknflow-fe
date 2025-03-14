@@ -1,14 +1,16 @@
 "use client";
 import useSession from "@/features/auth/hooks/use-session";
-import { addDays, format, parseISO, startOfWeek } from "date-fns";
+import { formatJakartaTime } from "@/lib/date";
+import { generateTimeSlots } from "@/lib/time-slot";
+import { addDays, format, startOfWeek } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useSession as UseNextAuthSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import BookingModal from "../components/booking-modal";
 import Calendar from "../components/calendar";
-import type { Booking, TransactionRequest } from "../types";
-import { useSession as UseNextAuthSession } from "next-auth/react";
-import { useSchedule } from "../hooks/use-schedule";
 import useCreateTransaction from "../hooks/use-create-transaction";
+import { useSchedule } from "../hooks/use-schedule";
+import type { Booking, TransactionRequest } from "../types";
 
 export default function ScheduleContainer() {
   const { data: schedules } = useSchedule({ serviceType: "gym" });
@@ -21,14 +23,8 @@ export default function ScheduleContainer() {
 
   useEffect(() => {
     if (schedules?.gym) {
-      const openAt = parseISO(schedules.gym.open_at).getUTCHours();
-      const closeAt = parseISO(schedules.gym.close_at).getUTCHours();
-      const slots = [];
-
-      for (let hour = openAt; hour < closeAt; hour++) {
-        slots.push(`${hour.toString().padStart(2, "0")}:00`);
-      }
-
+      const slots = generateTimeSlots(schedules.gym);
+      console.log(slots);
       setTimeSlots(slots);
     }
   }, [schedules?.gym]);
@@ -93,8 +89,8 @@ export default function ScheduleContainer() {
         </p>
         {schedules?.gym && (
           <p className="text-sm text-muted-foreground">
-            Gym Hours: {format(parseISO(schedules.gym.open_at), "HH:mm")} -{" "}
-            {format(parseISO(schedules.gym.close_at), "HH:mm")}
+            Gym Hours: {formatJakartaTime(schedules.gym.open_at, "HH:mm")} -{" "}
+            {formatJakartaTime(schedules.gym.close_at, "HH:mm")}
           </p>
         )}
       </div>
