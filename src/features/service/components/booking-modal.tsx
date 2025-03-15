@@ -39,6 +39,7 @@ import { TransactionRequest } from "../types";
 import { SERVICE_GYM_ID } from "@/lib/env";
 import useCreateTransaction from "../hooks/use-create-transaction";
 import { formatJakartaTime, localToUTC } from "@/lib/date";
+import { getId } from "@/lib/get-id";
 
 const bookingFormSchema = z.object({
   name: z
@@ -62,7 +63,8 @@ interface BookingDialogProps {
   open: boolean;
   selectedSlot: string | null;
   onClose: () => void;
-  onConfirm: (transaction: TransactionRequest) => void; // Kirim data ke parent
+  onConfirm: (transaction: TransactionRequest) => void;
+  serviceType: string;
 }
 
 export default function BookingModal({
@@ -71,6 +73,7 @@ export default function BookingModal({
   onClose,
   onConfirm,
   user,
+  serviceType,
 }: BookingDialogProps) {
   const form = useForm<BookingFormValues>({
     resolver: zodResolver(bookingFormSchema),
@@ -103,7 +106,7 @@ export default function BookingModal({
 
   const onSubmit = async (values: BookingFormValues) => {
     const transactionRequest: TransactionRequest = {
-      service_id: SERVICE_GYM_ID ?? "",
+      service_id: getId(serviceType) ?? "",
       start_at: new Date(selectedSlot).toISOString().replace(/\.\d{3}Z$/, "Z"),
       end_at: localToUTC(
         new Date(date.getTime() + values.hour * 60 * 60 * 1000)
@@ -114,7 +117,8 @@ export default function BookingModal({
       user_phone_number: values.phone_number,
     };
 
-    onConfirm(transactionRequest); // Kirim data ke ScheduleContainer
+    await onConfirm(transactionRequest);
+    form.reset();
   };
 
   return (
@@ -128,13 +132,6 @@ export default function BookingModal({
             Complete the form below to book your gym session.
           </DialogDescription>
         </DialogHeader>
-        <p>{JSON.stringify(user)}</p>
-        <div className="mb-4">
-          <p className="text-gray-300">Selected time:</p>
-          <p className="font-semibold">{formattedDate}</p>
-          <p className="font-semibold">{formattedTime}</p>
-          <p className="text-xs text-gray-400 mt-1 font-mono">{selectedSlot}</p>
-        </div>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

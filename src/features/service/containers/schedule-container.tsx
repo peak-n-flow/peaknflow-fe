@@ -11,20 +11,21 @@ import Calendar from "../components/calendar";
 import useCreateTransaction from "../hooks/use-create-transaction";
 import { useSchedule } from "../hooks/use-schedule";
 import type { Booking, TransactionRequest } from "../types";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ScheduleContainer({ type }: { type: string }) {
-  const { data: schedules } = useSchedule({ serviceType: type });
+  const { data: schedules, refetch } = useSchedule({ serviceType: type });
   const [startDate, setStartDate] = useState(() =>
     startOfWeek(new Date(), { weekStartsOn: 3 })
   );
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
   const { status } = UseNextAuthSession();
   const createTransaction = useCreateTransaction();
-
+  const queryClient = useQueryClient();
   useEffect(() => {
     if (schedules?.gym) {
       const slots = generateTimeSlots(schedules.gym);
-      console.log(slots);
       setTimeSlots(slots);
     }
   }, [schedules?.gym]);
@@ -56,11 +57,15 @@ export default function ScheduleContainer({ type }: { type: string }) {
       onSuccess: () => {
         setIsDialogOpen(false);
         setSelectedSlot(null);
+        toast.success("Booking successful");
+        queryClient.invalidateQueries({ queryKey: "schedule" });
+        refetch();
       },
       onError: (error) => {
-        console.error("Transaction error:", error);
+        toast.error(error.message);
         setIsDialogOpen(false);
         setSelectedSlot(null);
+        refetch();
       },
     });
   };
@@ -115,6 +120,7 @@ export default function ScheduleContainer({ type }: { type: string }) {
         onClose={handleCloseDialog}
         onConfirm={handleConfirmBooking}
         user={!isLoading && status === "authenticated" ? data.user : null}
+        serviceType={type}
       />
     </section>
   );

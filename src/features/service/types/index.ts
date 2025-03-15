@@ -27,3 +27,12 @@ export interface TransactionRequest {
   user_email: string;
   user_phone_number: string;
 }
+
+export interface Payment {
+  code: string;
+  total_price: string;
+  payment_method: string;
+  expire_at: string;
+  qr_code_url: string;
+  va_number: string;
+}
