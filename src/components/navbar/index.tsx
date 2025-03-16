@@ -84,13 +84,13 @@ const Navbar = () => {
             <div className="hidden md:flex space-x-12 items-center">
               <Link
                 href="/"
-                className="text-base font-thin hover:text-primary-40 text-white"
+                className="text-base font-light hover:text-primary-40 text-white"
               >
                 Home
               </Link>
               <div className="relative">
                 <button
-                  className="flex items-center text-base font-thin hover:text-primary-40 text-white"
+                  className="flex items-center text-base font-light hover:text-primary-40 text-white"
                   onClick={() =>
                     setIsServiceDropdownOpen(!isServiceDropdownOpen)
                   }
@@ -127,7 +127,7 @@ const Navbar = () => {
               </div>
               <Link
                 href="/contact"
-                className="text-base font-thin hover:text-primary-40 text-white"
+                className="text-base font-light hover:text-primary-40 text-white"
               >
                 Contact
               </Link>
