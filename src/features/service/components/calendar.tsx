@@ -25,7 +25,6 @@ export default function Calendar({
 }) {
   return (
     <div className="overflow-auto">
-      {timeSlots.length > 0 ? (
         <Table>
           <TableHeader>
             <TableRow className="border-secondary-60 bg-transparent">
@@ -102,9 +101,7 @@ export default function Calendar({
             ))}
           </TableBody>
         </Table>
-      ) : (
-        <div className="text-center py-8">Loading schedule...</div>
-      )}
+     
     </div>
   );
 }
