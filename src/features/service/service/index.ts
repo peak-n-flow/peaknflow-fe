@@ -22,7 +22,7 @@ const createTransaction = async (request: TransactionRequest) => {
       body: JSON.stringify(request),
     });
     const data = await response.json();
-    if (response.status !== 201) {
+    if (data.status !== 201) {
       throw new Error(data.message);
     }
     return data;
@@ -31,4 +31,24 @@ const createTransaction = async (request: TransactionRequest) => {
   }
 };
 
-export { getSchedule, createTransaction };
+const getAvailableTimeSlots = async (
+  serviceType: string,
+  startAt: string,
+  timeZone?: string
+) => {
+  const serviceId = getId(serviceType);
+  const startAtDate = new Date(startAt);
+  startAtDate.setHours(startAtDate.getHours() + 7);
+  const adjustedStartAt = startAtDate.toISOString();
+  try {
+    const response = await fetch(
+      `/api/services/${serviceId}/bookings/available-time-slots?start_at=${adjustedStartAt}`
+    );
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    return getErrorMessage(error);
+  }
+};
+
+export { getSchedule, createTransaction, getAvailableTimeSlots };

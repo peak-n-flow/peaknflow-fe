@@ -13,12 +13,16 @@ import { useSchedule } from "../hooks/use-schedule";
 import type { Booking, TransactionRequest } from "../types";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAvailableSlots } from "../hooks/use-available-slots";
 
 export default function ScheduleContainer({ type }: { type: string }) {
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+
   const { data: schedules, refetch } = useSchedule({ serviceType: type });
   const [startDate, setStartDate] = useState(() =>
     startOfWeek(new Date(), { weekStartsOn: 3 })
   );
+  const [maxBookHour, setMaxBookHour] = useState(0);
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
   const { status } = UseNextAuthSession();
   const createTransaction = useCreateTransaction();
@@ -38,15 +42,27 @@ export default function ScheduleContainer({ type }: { type: string }) {
     setIsDialogOpen(false);
     setSelectedSlot(null);
   };
+  const { data: availableSlotsData } = useAvailableSlots({
+    serviceType: type,
+    startDate: selectedDate || "",
+    enabled: !!selectedDate,
+  });
 
+  useEffect(() => {
+    if (availableSlotsData) {
+      setMaxBookHour(availableSlotsData.count_available_slots || 0);
+    }
+  }, [availableSlotsData]);
   const handleSelectTimeSlot = (date: Date, time: string) => {
     const [hours] = time.split(":").map(Number);
     const selectedDate = new Date(date);
     selectedDate.setHours(hours, 0, 0, 0);
+
+    setSelectedDate(selectedDate.toISOString());
     setSelectedSlot(selectedDate.toISOString());
+    setMaxBookHour(availableSlotsData?.count_available_slots || 0);
     setIsDialogOpen(true);
   };
-
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -54,10 +70,17 @@ export default function ScheduleContainer({ type }: { type: string }) {
     if (!selectedSlot) return;
 
     createTransaction.mutate(request, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         setIsDialogOpen(false);
         setSelectedSlot(null);
+        console.log(data);
         toast.success("Booking successful");
+
+        // Membuka tab baru dengan redirect_url jika tersedia
+        if (data.data.redirect_url) {
+          window.open(data.data.redirect_url, "_blank");
+        }
+
         queryClient.invalidateQueries({ queryKey: "schedule" });
         refetch();
       },
@@ -121,6 +144,7 @@ export default function ScheduleContainer({ type }: { type: string }) {
         onConfirm={handleConfirmBooking}
         user={!isLoading && status === "authenticated" ? data.user : null}
         serviceType={type}
+        maxBookHour={maxBookHour}
       />
     </section>
   );

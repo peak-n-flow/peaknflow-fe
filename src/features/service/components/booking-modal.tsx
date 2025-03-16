@@ -1,18 +1,15 @@
 "use client";
 
-import type React from "react";
 
-import { useEffect, useState } from "react";
-import { format } from "date-fns";
+import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -24,7 +21,6 @@ import {
 } from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -32,14 +28,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { TransactionRequest } from "../types";
-import { SERVICE_GYM_ID } from "@/lib/env";
-import useCreateTransaction from "../hooks/use-create-transaction";
 import { formatJakartaTime, localToUTC } from "@/lib/date";
 import { getId } from "@/lib/get-id";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { TransactionRequest } from "../types";
 
 const bookingFormSchema = z.object({
   name: z
@@ -65,6 +59,7 @@ interface BookingDialogProps {
   onClose: () => void;
   onConfirm: (transaction: TransactionRequest) => void;
   serviceType: string;
+  maxBookHour: number;
 }
 
 export default function BookingModal({
@@ -74,6 +69,7 @@ export default function BookingModal({
   onConfirm,
   user,
   serviceType,
+  maxBookHour
 }: BookingDialogProps) {
   const form = useForm<BookingFormValues>({
     resolver: zodResolver(bookingFormSchema),
@@ -265,16 +261,58 @@ export default function BookingModal({
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="gopay">GoPay</SelectItem>
-                          <SelectItem value="mandiri">Mandiri</SelectItem>
+                          <SelectItem value="mandiri_bank_transfer">Mandiri</SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>
                     <FormMessage className="absolute right-3 top-0.5 text-danger-40 text-xs" />
                   </FormItem>
+
                 );
               }}
             />
-
+            <FormField
+              control={form.control}
+              name="hour"
+              render={({ field }) => {
+              const hasError = !!form.formState.errors.hour;
+              return (
+                <FormItem className="relative pb-2">
+                <FormLabel
+                  className={`absolute left-3 top-1 text-xs ${
+                  hasError ? "text-danger-40" : "text-[#5C5A5A]"
+                  }`}
+                >
+                  Booking Hours (Max {maxBookHour} hours)
+                </FormLabel>
+                <FormControl>
+                  <Select
+                  onValueChange={(value) => field.onChange(Number(value))}
+                  value={field.value.toString()}
+                  >
+                  <SelectTrigger
+                    className={`pt-6 ${
+                    hasError
+                      ? "border-danger-40 bg-transparent"
+                      : "bg-transparent border border-secondary-60"
+                    }`}
+                  >
+                    <SelectValue placeholder="Select booking hours" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: maxBookHour }, (_, i) => (
+                    <SelectItem key={i + 1} value={(i + 1).toString()}>
+                      {i + 1} hour{ i + 1 > 1 ? 's' : '' }
+                    </SelectItem>
+                    ))}
+                  </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage className="absolute right-3 top-0.5 text-danger-40 text-xs" />
+                </FormItem>
+              );
+              }}
+            />
             <Button type="submit" className="w-full">
               Reservasi Sekarang
             </Button>

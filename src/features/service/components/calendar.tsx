@@ -21,47 +21,40 @@ export default function Calendar({
   dateRange: Date[];
   timeSlots: string[];
   bookings: { [key: string]: Booking[] };
-  onSelectTimeSlot: any;
+  onSelectTimeSlot: (date: Date, time: string) => void;
 }) {
   return (
     <div className="overflow-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-secondary-60 bg-transparent">
-              {dateRange.map((date, index) => (
-                <TableHead
-                  key={index}
-                  className="border border-secondary-60 text-center text-white md:text-h4 h-20 md:h-36"
-                >
-                  {format(date, "EEE, MMM d")}
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {timeSlots.map((time) => (
-              <TableRow
-                key={time}
-                className="border-secondary-60 bg-transparent"
+      <Table>
+        <TableHeader>
+          <TableRow className="border-secondary-60 bg-transparent">
+            {dateRange.map((date, index) => (
+              <TableHead
+                key={index}
+                className="border border-secondary-60 text-center text-white md:text-h4 h-20 md:h-36"
               >
-                {dateRange.map((date, dateIndex) => {
-                  const dateStr = format(date, "yyyy-MM-dd");
-                  const booking = getTimeSlotWithStatus(
-                    dateStr,
-                    time,
-                    bookings
-                  );
+                {format(date, "EEE, MMM d")}
+              </TableHead>
+            ))}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {timeSlots.map((time) => (
+            <TableRow key={time} className="border-secondary-60 bg-transparent">
+              {dateRange.map((date, dateIndex) => {
+                const dateStr = format(date, "yyyy-MM-dd");
+                const booking = getTimeSlotWithStatus(dateStr, time, bookings);
 
-                  const isSlotSelectable =
-                    !booking || booking.status === "booked";
+                const isSlotSelectable =
+                  !booking || booking.status === "booked";
 
-                  return (
-                    <TableCell
-                      key={dateIndex}
-                      onClick={() =>
-                        isSlotSelectable && onSelectTimeSlot(date, time)
-                      }
-                      className={`
+                return (
+                  <TableCell
+                    key={dateIndex}
+                    onClick={() =>
+                      isSlotSelectable && onSelectTimeSlot(date, time)
+                    }
+                    className={`
                           border border-secondary-60 
                           p-6 h-20 md:h-36 md:text-h1 text-center md:text-start relative 
                           ${
@@ -72,36 +65,35 @@ export default function Calendar({
                               : "bg-primary-100 cursor-not-allowed"
                           }
                         `}
-                    >
-                      {time}
-                      {booking && (
-                        // <div className="text-xs text-white mt-2">
-                        //   <div>
-                        //     •{" "}
-                        //     {booking.status === "closed"
-                        //       ? "Closed"
-                        //       : "Booked"}
-                        //   </div>
-                        //   <div className="mt-1 text-gray-400">
-                        //     {new Date(booking.start_at)
-                        //       .toUTCString()
-                        //       .slice(17, 22)}{" "}
-                        //     -
-                        //     {new Date(booking.end_at)
-                        //       .toUTCString()
-                        //       .slice(17, 22)}
-                        //   </div>
-                        // </div>
-                        <GymStatusLabel status={booking.status} />
-                      )}
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-     
+                  >
+                    {time}
+                    {booking && (
+                      // <div className="text-xs text-white mt-2">
+                      //   <div>
+                      //     •{" "}
+                      //     {booking.status === "closed"
+                      //       ? "Closed"
+                      //       : "Booked"}
+                      //   </div>
+                      //   <div className="mt-1 text-gray-400">
+                      //     {new Date(booking.start_at)
+                      //       .toUTCString()
+                      //       .slice(17, 22)}{" "}
+                      //     -
+                      //     {new Date(booking.end_at)
+                      //       .toUTCString()
+                      //       .slice(17, 22)}
+                      //   </div>
+                      // </div>
+                      <GymStatusLabel status={booking.status} />
+                    )}
+                  </TableCell>
+                );
+              })}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }
