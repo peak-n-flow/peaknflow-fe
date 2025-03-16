@@ -14,10 +14,11 @@ import type { Booking, TransactionRequest } from "../types";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAvailableSlots } from "../hooks/use-available-slots";
+import { useRouter } from "next/navigation";
 
 export default function ScheduleContainer({ type }: { type: string }) {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-
+  const router = useRouter();
   const { data: schedules, refetch } = useSchedule({ serviceType: type });
   const [startDate, setStartDate] = useState(() =>
     startOfWeek(new Date(), { weekStartsOn: 3 })
@@ -79,6 +80,7 @@ export default function ScheduleContainer({ type }: { type: string }) {
         // Membuka tab baru dengan redirect_url jika tersedia
         if (data.data.redirect_url) {
           window.open(data.data.redirect_url, "_blank");
+          router.push(`/transaction/snap?snapToken=${data.data.snap_token}`);
         }
 
         queryClient.invalidateQueries({ queryKey: "schedule" });
