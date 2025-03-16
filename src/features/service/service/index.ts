@@ -1,6 +1,7 @@
 import { getErrorMessage } from "@/lib/error";
 import { BookingListResponse, Payment, TransactionRequest } from "../types";
 import { getId } from "@/lib/get-id";
+import { api } from "@/lib/axios";
 
 const getSchedule = async (serviceType: string) => {
   const serviceId = getId(serviceType);
@@ -51,4 +52,21 @@ const getAvailableTimeSlots = async (
   }
 };
 
-export { getSchedule, createTransaction, getAvailableTimeSlots };
+const getTransactionByCode = async (code: string) => {
+  try {
+    const response = await api.get(
+      `/service-transactions/charge/${code}/status`
+    );
+    console.log(response.data);
+    return response.data.payload;
+  } catch (error) {
+    return getErrorMessage(error);
+  }
+};
+
+export {
+  getSchedule,
+  createTransaction,
+  getAvailableTimeSlots,
+  getTransactionByCode,
+};
