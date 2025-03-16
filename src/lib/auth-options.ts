@@ -37,7 +37,7 @@ export const authOptions: NextAuthOptions = {
 
           return res.data.payload;
         } catch (err: any) {
-          throw new Error(err.response.data.payload.error);
+          throw new Error(err.response.data.payload.error.message);
         }
       },
     }),

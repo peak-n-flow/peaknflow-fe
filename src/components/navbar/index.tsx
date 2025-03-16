@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { disableNavbarFooter } from "@/lib/disable";
@@ -11,13 +11,22 @@ const Navbar = () => {
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false);
   const [isTop, setIsTop] = useState(true);
+  const [isServiceDropdownOpen, setIsServiceDropdownOpen] = useState(false);
   const pathname = usePathname();
   const [isSaleOpen, setIsSaleOpen] = useState(true);
 
   const closeSale = () => {
     setIsSaleOpen(false);
   };
+
+  useEffect(() => {
+    setIsMobileDropdownOpen(false);
+    setIsMobileMenuOpen(false);
+    setIsServiceDropdownOpen(false);
+  }, [pathname]);
+
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -28,7 +37,7 @@ const Navbar = () => {
         setShowNavbar(true);
       }
 
-      setIsTop(currentScrollY === 0); // Detect if at the top
+      setIsTop(currentScrollY === 0);
       setLastScrollY(currentScrollY);
     };
 
@@ -37,12 +46,6 @@ const Navbar = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [lastScrollY]);
-
-  const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "Services", href: "/services" },
-    { name: "Contact", href: "/contact" },
-  ];
 
   return (
     !disableNavbarFooter.includes(pathname) && (
@@ -58,7 +61,7 @@ const Navbar = () => {
         >
           {isSaleOpen && (
             <div className="bg-secondary-100 relative">
-              <div className="w-full container h-8 py-2.5 flex justify-center items-center text-white text-xs ">
+              <div className="w-full container h-8 py-2.5 flex justify-center items-center text-white text-xs">
                 MEET FOUNDATION: THE ESSENTIAL SELF-CARE MEMBERSHIP.
               </div>
               <X
@@ -77,20 +80,56 @@ const Navbar = () => {
             />
 
             <div className="hidden md:flex space-x-12 items-center">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className={`text-base font-thin hover:text-primary-40 ${
-                    pathname === link.href
-                      ? "font-medium text-primary-60"
-                      : "text-white"
-                  }`}
+              <Link
+                href="/"
+                className="text-base font-thin hover:text-primary-40 text-white"
+              >
+                Home
+              </Link>
+              <div className="relative">
+                <button
+                  className="flex items-center text-base font-thin hover:text-primary-40 text-white"
+                  onClick={() =>
+                    setIsServiceDropdownOpen(!isServiceDropdownOpen)
+                  }
                 >
-                  {link.name}
-                </Link>
-              ))}
-              <Link href={"/booking"}>
+                  Services{" "}
+                  {isServiceDropdownOpen ? (
+                    <ChevronUp className="w-4 h-4 ml-1" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 ml-1" />
+                  )}
+                </button>
+                {isServiceDropdownOpen && (
+                  <div className="border-primary-60 border absolute left-20mt-2 w-48 bg-secondary-80 shadow-lg rounded-md overflow-hidden">
+                    <Link
+                      href="/service/gym"
+                      className="block px-4 py-2 text-light-20 hover:bg-secondary-60"
+                    >
+                      Gym
+                    </Link>
+                    <Link
+                      href="/service/recovery"
+                      className="block px-4 py-2 text-light-20 hover:bg-secondary-60"
+                    >
+                      Recovery
+                    </Link>
+                    <Link
+                      href="/service/yoga"
+                      className="block px-4 py-2 text-light-20 hover:bg-gray-200"
+                    >
+                      Yoga
+                    </Link>
+                  </div>
+                )}
+              </div>
+              <Link
+                href="/contact"
+                className="text-base font-thin hover:text-primary-40 text-white"
+              >
+                Contact
+              </Link>
+              <Link href="/booking">
                 <Button>Book Now</Button>
               </Link>
             </div>
@@ -106,7 +145,6 @@ const Navbar = () => {
               )}
             </button>
           </nav>
-
           <div
             className={`md:hidden origin-top bg-transparent backdrop-blur-3xl shadow-md transition-all duration-300 ease-in-out ${
               isMobileMenuOpen
@@ -116,21 +154,73 @@ const Navbar = () => {
             style={{ transformOrigin: "top" }}
           >
             <ul className="flex flex-col space-y-4 py-4 px-6">
-              {navLinks.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className={`text-base font-medium block ${
-                      pathname === link.href
-                        ? "text-primary-60"
-                        : "text-white hover:text-primary-40"
-                    }`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
+              <li>
+                <Link
+                  href="/"
+                  className="text-base font-medium block text-white hover:text-primary-40"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Home
+                </Link>
+              </li>
+              <li>
+                <button
+                  className="text-base font-medium flex items-center text-white hover:text-primary-40"
+                  onClick={() => setIsMobileDropdownOpen(!isMobileDropdownOpen)}
+                >
+                  Services{" "}
+                  {isMobileDropdownOpen ? (
+                    <ChevronUp className="w-4 h-4 ml-1" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 ml-1" />
+                  )}
+                </button>
+                {isMobileDropdownOpen && (
+                  <ul className="pl-4 mt-2 space-y-2">
+                    <li>
+                      <Link
+                        href="/service/gym"
+                        className="block text-light-20 hover:text-primary-40"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Gym
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/service/recovery"
+                        className="block text-light-20 hover:text-primary-40"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Recovery
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/service/yoga"
+                        className="block text-light-20 hover:text-primary-40"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Yoga
+                      </Link>
+                    </li>
+                  </ul>
+                )}
+              </li>
+              <li>
+                <Link
+                  href="/contact"
+                  className="text-base font-medium block text-white hover:text-primary-40"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Contact
+                </Link>
+              </li>
+              <li>
+                <Link href="/booking" className="block">
+                  <Button>Book Now</Button>
+                </Link>
+              </li>
             </ul>
           </div>
         </header>

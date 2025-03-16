@@ -19,7 +19,7 @@ const createInstance = (config?: CreateAxiosDefaults) => {
         // Server-side
         session = await getServerSession(authOptions);
       }
-
+      config.headers["x-api-key"] = `Key ${process.env.NEXT_PUBLIC_API_KEY}`;
       if (session) {
         config.headers[
           "Authorization"
@@ -39,22 +39,25 @@ const createInstance = (config?: CreateAxiosDefaults) => {
     (error) => Promise.reject(error)
   );
 
-  instance.interceptors.response.use(
-    (response) => response,
-    (error: AxiosError) => {
-      if (error.response?.status === 401) {
-        // Redirect to logout route
-        if (typeof window !== "undefined") {
-          // Client-side redirect
-          window.location.href = "/auth/logout";
-        } else {
-          // Server-side redirect
-          redirect("/auth/logout");
-        }
-      }
-      return Promise.reject(error);
-    }
-  );
+  // instance.interceptors.response.use(
+  //   (response) => response,
+  //   (error: AxiosError) => {
+  //     if (error.response?.status === 401) {
+  //       // Redirect to logout route
+  //       if (typeof window !== "undefined") {
+  //         // Client-side redirect
+  //         window.location.href = "/auth/logout";
+  //       } else {
+  //         // Server-side redirect
+  //         return Promise.reject({
+  //           redirect: "/auth/logout",
+  //           message: "Unauthorized",
+  //         });
+  //       }
+  //     }
+  //     return Promise.reject(error);
+  //   }
+  // );
 
   return instance;
 };
