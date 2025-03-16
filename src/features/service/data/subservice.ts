@@ -47,4 +47,19 @@ const recoverySubservices = [
   },
 ];
 
-export { gymSubservices, yogaSubservices, recoverySubservices };
+const wellnessBarSubservices = [
+  {
+    title: "Wellness Bar",
+    description: "Energizing drinks for recovery and focus.",
+  },
+  {
+    title: "Signature Blends",
+    description: "Cold-pressed juices, coffee, matcha, and boosters.",
+  },
+  {
+    title: "Refresh & Recharge",
+    description: "Hydrate, unwind, and fuel your day.",
+  },
+];
+
+export { gymSubservices, yogaSubservices, recoverySubservices,wellnessBarSubservices };

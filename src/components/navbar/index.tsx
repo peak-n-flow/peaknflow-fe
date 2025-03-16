@@ -124,6 +124,12 @@ const Navbar = () => {
                     >
                       Yoga
                     </Link>
+                    <Link
+                      href="/service/wellness-bar"
+                      className="block px-4 py-2 text-light-20 hover:bg-gray-200"
+                    >
+                      Wellness Bar
+                    </Link>
                   </div>
                 )}
               </div>
@@ -208,6 +214,15 @@ const Navbar = () => {
                         Yoga
                       </Link>
                     </li>
+                    <li>
+                      <Link
+                        href="/service/wellness-bar"
+                        className="block text-light-20 hover:text-primary-40"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Wellness Bar
+                      </Link>
+                    </li>
                   </ul>
                 )}
               </li>
@@ -222,7 +237,7 @@ const Navbar = () => {
               </li>
               <li>
                 <Link href={data?.user ? "/auth/logout" : "/auth/login"}>
-                  <Button>{data?.user ? "Login" : "Logout"}</Button>
+                  <Button>{data?.user ? "Logout" : "Login"}</Button>
                 </Link>
               </li>
             </ul>
