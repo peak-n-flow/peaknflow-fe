@@ -71,13 +71,15 @@ const Navbar = () => {
             </div>
           )}
           <nav className="container flex justify-between items-center py-4">
-            <Image
-              src={"/logo-nav.png"}
-              alt="logo"
-              className="invert brightness-0"
-              width={60}
-              height={40}
-            />
+            <Link href={"/"}>
+              <Image
+                src={"/logo-nav.png"}
+                alt="logo"
+                className="invert brightness-0"
+                width={60}
+                height={40}
+              />
+            </Link>
 
             <div className="hidden md:flex space-x-12 items-center">
               <Link

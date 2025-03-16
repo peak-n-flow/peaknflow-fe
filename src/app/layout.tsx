@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Peak & Flow",
   description: "Elevate Your Recovery & Fitness in a Private Space",
-  icons:"/logo-nav.png",
+  icons:"/logo.png",
 };
 
 export const headers = {
