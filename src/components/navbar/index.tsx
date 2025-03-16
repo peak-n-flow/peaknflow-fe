@@ -6,6 +6,7 @@ import { Menu, X, ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { disableNavbarFooter } from "@/lib/disable";
+import { useSession } from "next-auth/react";
 
 const Navbar = () => {
   const [showNavbar, setShowNavbar] = useState(true);
@@ -16,6 +17,7 @@ const Navbar = () => {
   const [isServiceDropdownOpen, setIsServiceDropdownOpen] = useState(false);
   const pathname = usePathname();
   const [isSaleOpen, setIsSaleOpen] = useState(true);
+  const { data } = useSession();
 
   const closeSale = () => {
     setIsSaleOpen(false);
@@ -131,8 +133,8 @@ const Navbar = () => {
               >
                 Contact
               </Link>
-              <Link href="/booking">
-                <Button>Book Now</Button>
+              <Link href={data?.user ? "/auth/logout" : "/auth/login"}>
+                <Button>{data?.user ? "Login" : "Logout"}</Button>
               </Link>
             </div>
 
@@ -219,8 +221,8 @@ const Navbar = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/booking" className="block">
-                  <Button>Book Now</Button>
+                <Link href={data?.user ? "/auth/logout" : "/auth/login"}>
+                  <Button>{data?.user ? "Login" : "Logout"}</Button>
                 </Link>
               </li>
             </ul>
