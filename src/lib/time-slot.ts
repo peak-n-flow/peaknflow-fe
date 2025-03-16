@@ -11,9 +11,11 @@ export function generateTimeSlots(gym: Gym) {
   const closeAtJakarta = toZonedTime(closeAtUTC, JAKARTA_TIMEZONE);
 
   const openHour = openAtJakarta.getHours();
-  const closeHour = closeAtJakarta.getHours();
+  let closeHour = closeAtJakarta.getHours();
 
   const slots = [];
+
+  if (closeHour === 0) closeHour = 24;
 
   for (let hour = openHour; hour < closeHour; hour++) {
     slots.push(`${hour.toString().padStart(2, "0")}:00`);
