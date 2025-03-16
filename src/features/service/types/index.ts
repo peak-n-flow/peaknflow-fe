@@ -35,4 +35,15 @@ export interface Payment {
   expire_at: string;
   qr_code_url: string;
   va_number: string;
+  bill_key: string;
+  biller_code: string;
+  redirect_url: string;
+  snap_token: string;
+}
+
+export interface AvailableTimeSlots {
+  max_duration_in_minutes: number;
+  duration_in_minutes: number;
+  count_available_slots: number;
+  count_available_slots_unit: string;
 }

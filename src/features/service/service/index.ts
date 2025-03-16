@@ -1,5 +1,5 @@
 import { getErrorMessage } from "@/lib/error";
-import { BookingListResponse, TransactionRequest } from "../types";
+import { BookingListResponse, Payment, TransactionRequest } from "../types";
 import { getId } from "@/lib/get-id";
 
 const getSchedule = async (serviceType: string) => {
@@ -21,11 +21,9 @@ const createTransaction = async (request: TransactionRequest) => {
       },
       body: JSON.stringify(request),
     });
-
     const data = await response.json();
-
-    if (data.status !== 200) {
-      throw new Error(data?.message || "An error occurred");
+    if (response.status !== 201) {
+      throw new Error(data.message);
     }
     return data;
   } catch (error) {
