@@ -120,7 +120,7 @@ export default function StackingSection() {
                         ? "/service/recovery"
                         : index === 1
                         ? "/service/gym"
-                        : "/sercvice/yoga"
+                        : "/service/yoga"
                     }`}
                   >
                     <Button className="button mt-6 md:mt-0 opacity-0 scale-75">
