@@ -22,7 +22,7 @@ export default function HeroService({
         </div>
         <h1 className="text-h4 md:text-display-xs max-w-4xl text-center xl:text-start">{description}</h1>
       </div>
-      <Image src={image} alt={""} className="w-full h-[400px] md:h-[600px] rounded-xl object-center" />
+      <Image src={image} alt={""} className="w-full h-[250px] md:h-[600px] rounded-xl object-cover" />
     </section>
   );
 }
