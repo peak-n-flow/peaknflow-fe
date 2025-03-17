@@ -5,20 +5,10 @@ import MainProvider from "@/components/provider";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
   title: "Peak & Flow",
   description: "Elevate Your Recovery & Fitness in a Private Space",
-  icons:"/logo.png",
+  icons: "/logo.png",
 };
 
 export const headers = {
@@ -32,9 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-secondary-80 text-white`}
-      >
+      <body className={`antialiased bg-secondary-80 text-white`}>
         <MainProvider>
           <Navbar />
           {children}
