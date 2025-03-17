@@ -140,7 +140,7 @@ const Navbar = () => {
                 Contact
               </Link>
               <Link href={data?.user ? "/auth/logout" : "/auth/login"}>
-                <Button>{data?.user ? "Login" : "Logout"}</Button>
+                <Button>{data?.user ? "Logout" : "Login"}</Button>
               </Link>
             </div>
 
