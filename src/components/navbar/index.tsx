@@ -51,7 +51,7 @@ const Navbar = () => {
 
   return (
     !disableNavbarFooter.includes(pathname) &&
-    disableNavbarFooter.includes("/admin") && (
+    !pathname.includes("/admin") && (
       <>
         <header
           className={`fixed top-0 w-full z-50 transition-transform duration-500 ${
