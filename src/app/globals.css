@@ -1,9 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* 
+@font-face {
+  font-family: "Helvetica Neue";
+  src: url("/fonts/HelveticaNeueLight.woff2") format("woff2"),
+    url("/fonts/helvetica-neue.woff") format("woff");
+  font-weight: 300;
+  font-display: swap;
+} */
 
 body {
   font-weight: 300;
+  font-family: "Helvetica Neue", Arial, sans-serif;
 }
 
 @layer base {
