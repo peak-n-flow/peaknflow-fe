@@ -29,3 +29,8 @@ interface ErrorAPI {
   message: string;
   status: number;
 }
+
+interface DecodedJWT {
+  user_id: string;
+  role: string;
+}
