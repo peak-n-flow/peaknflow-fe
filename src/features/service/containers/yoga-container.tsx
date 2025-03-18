@@ -3,6 +3,8 @@ import HeroService from "../components/hero";
 import ServiceOffer from "../components/offer";
 import { yogaSubservices } from "../data/subservice";
 import ScheduleContainer from "./schedule-container";
+import FAQContainer from "./faq-container";
+import { yogaPilatesFAQ } from "../data/faq";
 
 export default async function YogaContainer() {
   return (
@@ -15,6 +17,7 @@ export default async function YogaContainer() {
       />
       <ServiceOffer subservices={yogaSubservices} />
       <ScheduleContainer type="yoga" />
+      <FAQContainer faqs={yogaPilatesFAQ} />
     </>
   );
 }

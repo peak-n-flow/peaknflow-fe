@@ -114,7 +114,15 @@ export default function StackingSection() {
                         : "Find harmony through movement with classes that improve mobility, flexibility, and inner balance."}
                     </h1>
                   </div>
-                  <Link href="/booking">
+                  <Link
+                    href={`${
+                      index === 0
+                        ? "/service/recovery"
+                        : index === 1
+                        ? "/service/gym"
+                        : "/service/yoga"
+                    }`}
+                  >
                     <Button className="button mt-6 md:mt-0 opacity-0 scale-75">
                       Reservation
                     </Button>

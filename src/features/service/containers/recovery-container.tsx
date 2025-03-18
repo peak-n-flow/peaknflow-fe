@@ -4,6 +4,8 @@ import HeroRecoveryImage from "@/assets/images/hero-recovery.jpg";
 import ServiceOffer from "../components/offer";
 import ScheduleContainer from "./schedule-container";
 import { recoverySubservices } from "../data/subservice";
+import FAQContainer from "./faq-container";
+import { recoveryFAQ } from "../data/faq";
 
 export default async function RecoveryContainer() {
   return (
@@ -16,6 +18,7 @@ export default async function RecoveryContainer() {
       />
       <ServiceOffer subservices={recoverySubservices} />
       <ScheduleContainer type="recovery" />
+      <FAQContainer faqs={recoveryFAQ} />
     </>
   );
 }
