@@ -76,8 +76,10 @@ export default function RegisterPage() {
   return (
     <div className="flex bg-white rounded-2xl px-4 md:px-10 py-10 md:py-20 flex-col justify-center space-y-6 min-w-72 sm:min-w-88 md:min-w-[440px] xl:min-w-[480px] 2xl:min-w-[520px] w-full xl:w-fit my-16 md:my-0 z-20">
       <div className="flex flex-col space-y-2 text-center">
-        <h1 className="text-h4 md:text-h1 font-medium text-black">Create Account</h1>
-        <p className="text-body-sm md:text-body-lg text-light-100">
+        <h1 className="text-h4 md:text-h1 font-medium text-black">
+          Create Account
+        </h1>
+        <p className="text-body-sm md:text-body-lg text-light-100 font-normal">
           Enter your details below to create an account
         </p>
       </div>
@@ -144,7 +146,7 @@ export default function RegisterPage() {
             render={({ field }) => {
               const hasError = !!form.formState.errors.phone_number;
               return (
-                <FormItem className="relative pb-2">
+                <FormItem className="relative">
                   <FormLabel
                     className={`absolute left-3 top-1 text-xs ${
                       hasError ? "text-danger-80" : "text-[#5C5A5A]"
@@ -153,21 +155,12 @@ export default function RegisterPage() {
                     Phone Number
                   </FormLabel>
                   <FormControl>
-                    <div
-                      className={`flex items-center pt-6 border rounded-md ${
-                        hasError ? "border-red-500" : ""
-                      }`}
-                    >
-                      <span className="pl-3 text-gray-500">+62</span>
-                      <Input
-                        placeholder="Enter your phone number"
-                        value={field.value}
-                        onChange={(e) =>
-                          field.onChange(e.target.value.replace(/\D/g, ""))
-                        }
-                        className="border-0 focus:ring-0 focus:border-0"
-                      />
-                    </div>
+                    <Input
+                      type="email"
+                      placeholder="+62XXXXXXXXXX"
+                      {...field}
+                      className={`pt-6 ${hasError ? "border-danger-80 " : ""}`}
+                    />
                   </FormControl>
                   <FormMessage className="absolute right-3 top-0.5 text-danger-80 text-xs" />
                 </FormItem>
@@ -217,9 +210,9 @@ export default function RegisterPage() {
           <Image alt="google" src={GoogleIcon || "/placeholder.svg"} width={24} height={24} />
           Continue with Google
         </Button> */}
-      <p className="px-8 text-center text-sm text-light-100">
+      <p className="px-8 text-center text-sm text-light-100 font-normal">
         Already have an account?{" "}
-        <Link href="/auth/login" className="text-primary-60">
+        <Link href="/auth/login" className="text-primary-60 font-semibold">
           Login
         </Link>
       </p>
