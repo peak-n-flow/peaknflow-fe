@@ -1,9 +1,9 @@
 interface User {
-  id: "string";
-  name: "string";
-  email: "string";
-  role: "string";
-  phone_number: "string";
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  phone_number: string;
 }
 
 interface Gym {
