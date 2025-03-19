@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Button } from "../ui/button";
 import { disableNavbarFooter } from "@/lib/disable";
 import { useSession } from "next-auth/react";
+import { cn } from "@/lib/utils";
 
 const Navbar = () => {
   const [showNavbar, setShowNavbar] = useState(true);
@@ -105,28 +106,48 @@ const Navbar = () => {
                   )}
                 </button>
                 {isServiceDropdownOpen && (
-                  <div className="border-primary-60 border absolute left-20mt-2 w-48 bg-secondary-80 shadow-lg rounded-md overflow-hidden">
+                  <div className="border-primary-60 border absolute mt-2 w-48 bg-secondary-80 font-medium shadow-lg rounded-md overflow-hidden left-1/2 transform -translate-x-1/2">
                     <Link
                       href="/service/gym"
-                      className="block px-4 py-2 text-light-20 hover:bg-secondary-60"
+                      className={cn(
+                        "block py-4 px-8",
+                        pathname === "/service/gym"
+                          ? "bg-primary-20 text-black"
+                          : "text-light-20 hover:bg-secondary-60 "
+                      )}
                     >
                       Gym
                     </Link>
                     <Link
                       href="/service/recovery"
-                      className="block px-4 py-2 text-light-20 hover:bg-secondary-60"
+                      className={cn(
+                        "block py-4 px-8",
+                        pathname === "/service/recovery"
+                          ? "bg-primary-20 text-dark-100"
+                          : "text-light-20 hover:bg-secondary-60"
+                      )}
                     >
                       Recovery
                     </Link>
                     <Link
                       href="/service/yoga"
-                      className="block px-4 py-2 text-light-20 hover:bg-gray-200"
+                      className={cn(
+                        "block py-4 px-8",
+                        pathname === "/service/yoga"
+                          ? "bg-primary-20 text-black"
+                          : "text-light-20 hover:bg-secondary-60"
+                      )}
                     >
                       Yoga
                     </Link>
                     <Link
                       href="/service/wellness-bar"
-                      className="block px-4 py-2 text-light-20 hover:bg-gray-200"
+                      className={cn(
+                        "block py-4 px-8",
+                        pathname === "/service/wellness-bar"
+                          ? "bg-primary-20 text-black"
+                          : "text-light-20 hover:bg-secondary-60"
+                      )}
                     >
                       Wellness Bar
                     </Link>
