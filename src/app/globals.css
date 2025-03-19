@@ -138,10 +138,7 @@ input:-webkit-autofill:active ~ label {
   color: #ffffff !important;
 }
 
-.relative:has(input:-webkit-autofill) .absolute {
-  color: #ffffff !important;
-  background-color: transparent !important;
-}
+
 
 /* Autofill styles override */
 input:-webkit-autofill,
