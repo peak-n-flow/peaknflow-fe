@@ -12,4 +12,15 @@ const getTotalUser = async () => {
   }
 };
 
-export { getTotalUser };
+const getTransactionsSummary = async () => {
+  try {
+    const response = await api.get(
+      "/service-transactions/summary?metric=revenue"
+    );
+    return response.data.payload.revenue;
+  } catch (error) {
+    return getErrorMessage(error);
+  }
+};
+
+export { getTotalUser, getTransactionsSummary };
