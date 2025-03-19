@@ -2,11 +2,10 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import GoogleIcon from "@/assets/icons/google.png";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,10 +16,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { signIn } from "next-auth/react";
-import Image from "next/image";
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { decodeJwt } from "@/lib/decode";
 
 const loginFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -31,6 +30,7 @@ type LoginFormValues = z.infer<typeof loginFormSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
+  const session = useSession();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<LoginFormValues>({
@@ -53,7 +53,7 @@ export default function LoginPage() {
 
       if (response?.ok) {
         toast.success("Login successful.");
-        router.push("/booking");
+        router.push("/service/gym");
       } else {
         throw response?.error || "Authentication failed";
       }
@@ -68,11 +68,26 @@ export default function LoginPage() {
     }
   }
 
+  useEffect(() => {
+    if (session?.data?.user) {
+      if (session.data.user.access_token) {
+        const decoded = decodeJwt(session.data.user.access_token);
+        if (decoded?.role !== "user") {
+          router.push("/admin");
+        } else {
+          router.push("/service/gym");
+        }
+      }
+    }
+  }, [session]);
+
   return (
     <div className="flex bg-white rounded-2xl px-4 md:px-10 py-10 md:py-20 flex-col justify-center space-y-6 min-w-72 sm:min-w-88 md:min-w-[440px] xl:min-w-[480px] 2xl:min-w-[520px] w-full xl:w-fit my-16 md:my-0 z-20">
       <div className="flex flex-col space-y-2 text-center">
-        <h1 className="text-h1 font-medium text-black">Login Account</h1>
-        <p className="text-body-lg text-light-100">
+        <h1 className="text-h4 md:text-h1 font-medium text-black">
+          Login Account
+        </h1>
+        <p className="text-body-sm md:text-body-lg text-light-100 font-normal">
           Enter your details below to login
         </p>
       </div>
@@ -151,9 +166,9 @@ export default function LoginPage() {
           />
           Continue with Google
         </Button> */}
-      <p className="px-8 text-center text-sm text-light-100">
+      <p className="px-8 text-center text-sm text-light-100 font-normal">
         Not registered yet?{" "}
-        <Link href="/auth/register" className="text-primary-60">
+        <Link href="/auth/register" className="text-primary-60 font-semibold">
           Create an Account
         </Link>
       </p>

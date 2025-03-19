@@ -112,17 +112,17 @@ export default function ScheduleContainer({ type }: { type: string }) {
         )} */}
       </div>
       <div className="flex justify-between items-center mb-6">
-        <div className="text-display-sm italic">WIB GMT+7</div>{" "}
+        <div className="text-body-md md:text-h6 italic">WIB GMT+7</div>{" "}
         <div className="flex items-center gap-4">
           <div className="text-display-sm italic">
             {format(startDate, "MMMM, d")}-{format(addDays(startDate, 3), "d")}
           </div>
           <div className="flex gap-2">
-            <button onClick={goToPreviousWeek} className="p-1 rounded-full ">
-              <ChevronLeft className="w-5 h-5" />
+            <button onClick={goToPreviousWeek} className="p-6 rounded-full border border-secondary-60 ">
+              <ChevronLeft className="w-6 h-6" />
             </button>
-            <button onClick={goToNextWeek} className="p-1 rounded-full ">
-              <ChevronRight className="w-5 h-5" />
+            <button onClick={goToNextWeek} className="p-6 rounded-full border border-secondary-60 ">
+              <ChevronRight className="w-6 h-6" />
             </button>
           </div>
         </div>

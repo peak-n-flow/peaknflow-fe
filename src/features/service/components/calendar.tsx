@@ -45,8 +45,7 @@ export default function Calendar({
                 const dateStr = format(date, "yyyy-MM-dd");
                 const booking = getTimeSlotWithStatus(dateStr, time, bookings);
 
-                const isSlotSelectable =
-                  !booking || booking.status === "booked";
+                const isSlotSelectable = !booking;
 
                 return (
                   <TableCell

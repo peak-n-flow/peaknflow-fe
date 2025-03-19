@@ -4,6 +4,8 @@ import HeroGymImage from "@/assets/images/hero-gym.jpg";
 import ServiceOffer from "../components/offer";
 import ScheduleContainer from "./schedule-container";
 import { gymSubservices } from "../data/subservice";
+import FAQContainer from "./faq-container";
+import { gymFAQ } from "../data/faq";
 
 export default async function GymContainer() {
   return (
@@ -16,6 +18,7 @@ export default async function GymContainer() {
       />
       <ServiceOffer subservices={gymSubservices} />
       <ScheduleContainer type="gym" />
+      <FAQContainer faqs={gymFAQ} />
     </>
   );
 }

@@ -1,9 +1,9 @@
 interface User {
-  id: "string";
-  name: "string";
-  email: "string";
-  role: "string";
-  phone_number: "string";
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  phone_number: string;
 }
 
 interface Gym {
@@ -28,4 +28,16 @@ interface Service {
 interface ErrorAPI {
   message: string;
   status: number;
+}
+
+interface DecodedJWT {
+  user_id: string;
+  role: string;
+}
+
+interface Meta {
+  total_data: number;
+  total_page: number;
+  page: number;
+  limit: number;
 }
