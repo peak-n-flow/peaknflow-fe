@@ -31,8 +31,7 @@ const registerFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
   phone_number: z
     .string()
-    .min(10, { message: "Phone number must be at least 10 digits." })
-    .regex(/^\d+$/, { message: "Phone number must contain only digits." }),
+    .min(10, { message: "Phone number must be at least 10 digits." }),
   password: z
     .string()
     .min(8, { message: "Password must be at least 6 characters." }),
@@ -58,11 +57,7 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      const formattedData = {
-        ...data,
-        phone_number: `+62${data.phone_number}`,
-      };
-      const response = await api.post("auth/register", formattedData);
+      const response = await api.post("auth/register", data);
 
       toast.success("Registration successful.");
       router.push("/auth/login");
@@ -156,7 +151,6 @@ export default function RegisterPage() {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      type="email"
                       placeholder="+62XXXXXXXXXX"
                       {...field}
                       className={`pt-6 ${hasError ? "border-danger-80 " : ""}`}
