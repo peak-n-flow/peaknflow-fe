@@ -19,19 +19,19 @@ export default function StatsOverview({
         icon={CalendarIcon}
         title="Reservasi Hari ini"
         count={reservations}
-        stats="orders"
+        stats="jam"
       />
       <StatsCard
         icon={UserIcon}
         title="Total User"
         count={users}
-        stats="users"
+        stats="User"
       />
       <StatsCard
         icon={RevenueIcon}
         title="Total Pendapatan"
         count={income}
-        stats="revenue"
+        stats="Rupiah"
       />
     </div>
   );

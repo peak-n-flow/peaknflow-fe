@@ -9,7 +9,7 @@ export default function StatsCard({
   count,
   stats,
 }: {
-  icon: StaticImport;
+icon: StaticImport;
   title: string;
   count: number;
   stats: string;
