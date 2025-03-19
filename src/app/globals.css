@@ -117,3 +117,40 @@ body {
     --chart-5: 340 75% 55%;
   }
 }
+
+/* Updated autofill styles */
+.autofill-dark:-webkit-autofill,
+.autofill-dark:-webkit-autofill:hover,
+.autofill-dark:-webkit-autofill:focus,
+.autofill-dark:-webkit-autofill:active {
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: #ffffff !important; /* Use white color */
+  transition: background-color 5000s ease-in-out 0s !important;
+  box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.1) !important; /* Slightly darker background */
+  caret-color: white !important; /* Cursor color */
+}
+
+/* To also keep the label white during autofill */
+input:-webkit-autofill ~ label,
+input:-webkit-autofill:hover ~ label,
+input:-webkit-autofill:focus ~ label,
+input:-webkit-autofill:active ~ label {
+  color: #ffffff !important;
+}
+
+
+
+/* Autofill styles override */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: inherit !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+  box-shadow: inset 0 0 0 1000px transparent !important;
+}
+
+.Label[class*="text-black"] {
+  color: #ffffff !important;
+}

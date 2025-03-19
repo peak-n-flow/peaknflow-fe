@@ -176,8 +176,9 @@ export default function ServiceOffer({
   }, [subservices, pathname]);
 
   return (
-    <section ref={sectionRef} className="container py-10 flex flex-col gap-10">
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-10 2xl:gap-20 justify-center items-center text-center">
+    <section ref={sectionRef} className="container py-10 flex flex-col gap-10 md:gap-20">
+      <h2 className="text-body-lg md:text-h6 text-white">What We Offer</h2>
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-10 2xl:gap-20 justify-center items-start text-start">
         {subservices.map((subservice, index) => (
           <div
             key={subservice.title}

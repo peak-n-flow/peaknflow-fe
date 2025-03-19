@@ -1,6 +1,5 @@
 "use client";
 
-
 import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -69,7 +68,7 @@ export default function BookingModal({
   onConfirm,
   user,
   serviceType,
-  maxBookHour
+  maxBookHour,
 }: BookingDialogProps) {
   const form = useForm<BookingFormValues>({
     resolver: zodResolver(bookingFormSchema),
@@ -119,7 +118,7 @@ export default function BookingModal({
 
   return (
     <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="bg-transparent border-secondary-60 sm:max-w-md p-10">
+      <DialogContent className="bg-secondary-80 border-secondary-60 sm:max-w-md p-10">
         <DialogHeader className="text-center gap-2">
           <DialogTitle className="text-center text-light-20 text-h4 md:text-h1">
             Form Reservation
@@ -139,10 +138,10 @@ export default function BookingModal({
                 return (
                   <FormItem className="relative">
                     <FormLabel
-                      className={`absolute left-3 top-1 text-xs ${
+                      className={`absolute left-3 top-1 text-xs autofill-dark [&:has(+_input:-webkit-autofill)]:text-white ${
                         hasError
                           ? "text-danger-40"
-                          : "bg-transparent border border-secondary-60 text-light-60"
+                          : "bg-transparent text-light-60"
                       }`}
                     >
                       Name
@@ -151,9 +150,9 @@ export default function BookingModal({
                       <Input
                         placeholder="Enter your name"
                         {...field}
-                        className={`pt-6 ${
+                        className={`pt-6 text-light-60 autofill-dark ${
                           hasError
-                            ? "border-danger-40 bg-transparent"
+                            ? "border-danger-40 bg-transparent text-danger-40"
                             : "bg-transparent border border-secondary-60 text-light-60"
                         }`}
                       />
@@ -172,10 +171,10 @@ export default function BookingModal({
                 return (
                   <FormItem className="relative">
                     <FormLabel
-                      className={`absolute left-3 top-1 text-xs ${
+                      className={`absolute left-3 top-1 text-xs autofill-dark [&:has(+_input:-webkit-autofill)]:text-white ${
                         hasError
                           ? "text-danger-40"
-                          : "bg-transparent border border-secondary-60 text-light-60"
+                          : "bg-transparent text-light-60"
                       }`}
                     >
                       Email
@@ -185,7 +184,7 @@ export default function BookingModal({
                         type="email"
                         placeholder="Enter your email"
                         {...field}
-                        className={`pt-6 ${
+                        className={`pt-6 text-light-60 autofill-dark ${
                           hasError
                             ? "border-danger-40 bg-transparent text-danger-40"
                             : "bg-transparent border border-secondary-60 text-light-60"
@@ -206,10 +205,10 @@ export default function BookingModal({
                 return (
                   <FormItem className="relative pb-2">
                     <FormLabel
-                      className={`absolute left-3 top-1 text-xs ${
+                      className={`absolute left-3 top-1 text-xs autofill-dark [&:has(+_input:-webkit-autofill)]:text-white ${
                         hasError
                           ? "text-danger-40"
-                          : "bg-transparent border border-secondary-60 text-light-60"
+                          : "bg-transparent text-light-60"
                       }`}
                     >
                       Phone Number
@@ -218,7 +217,7 @@ export default function BookingModal({
                       <Input
                         placeholder="+62XXXXXXXXXX"
                         {...field}
-                        className={`pt-6 ${
+                        className={`pt-6 text-light-60 autofill-dark ${
                           hasError
                             ? "border-danger-40 bg-transparent text-danger-40"
                             : "bg-transparent border border-secondary-60 text-light-60"
@@ -239,8 +238,8 @@ export default function BookingModal({
                 return (
                   <FormItem className="relative pb-2">
                     <FormLabel
-                      className={`absolute left-3 top-1 text-xs ${
-                        hasError ? "text-danger-40" : "text-[#5C5A5A]"
+                      className={`text-white absolute left-3 top-1 text-xs ${
+                        hasError ? "text-danger-40" : "text-white"
                       }`}
                     >
                       Payment Method
@@ -251,7 +250,7 @@ export default function BookingModal({
                         value={field.value}
                       >
                         <SelectTrigger
-                          className={`pt-6 ${
+                          className={`pt-6 h-12 ${
                             hasError
                               ? "border-danger-40 bg-transparent"
                               : "bg-transparent border border-secondary-60"
@@ -261,13 +260,14 @@ export default function BookingModal({
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="gopay">GoPay</SelectItem>
-                          <SelectItem value="mandiri_bank_transfer">Mandiri</SelectItem>
+                          <SelectItem value="mandiri_bank_transfer">
+                            Mandiri
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>
                     <FormMessage className="absolute right-3 top-0.5 text-danger-40 text-xs" />
                   </FormItem>
-
                 );
               }}
             />
@@ -275,42 +275,42 @@ export default function BookingModal({
               control={form.control}
               name="hour"
               render={({ field }) => {
-              const hasError = !!form.formState.errors.hour;
-              return (
-                <FormItem className="relative pb-2">
-                <FormLabel
-                  className={`absolute left-3 top-1 text-xs ${
-                  hasError ? "text-danger-40" : "text-[#5C5A5A]"
-                  }`}
-                >
-                  Booking Hours (Max {maxBookHour} hours)
-                </FormLabel>
-                <FormControl>
-                  <Select
-                  onValueChange={(value) => field.onChange(Number(value))}
-                  value={field.value.toString()}
-                  >
-                  <SelectTrigger
-                    className={`pt-6 ${
-                    hasError
-                      ? "border-danger-40 bg-transparent"
-                      : "bg-transparent border border-secondary-60"
-                    }`}
-                  >
-                    <SelectValue placeholder="Select booking hours" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: maxBookHour }, (_, i) => (
-                    <SelectItem key={i + 1} value={(i + 1).toString()}>
-                      {i + 1} hour{ i + 1 > 1 ? 's' : '' }
-                    </SelectItem>
-                    ))}
-                  </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage className="absolute right-3 top-0.5 text-danger-40 text-xs" />
-                </FormItem>
-              );
+                const hasError = !!form.formState.errors.hour;
+                return (
+                  <FormItem className="relative pb-2">
+                    <FormLabel
+                      className={`text-white absolute left-3 top-1 text-xs h-12 ${
+                        hasError ? "text-danger-40" : "text-white"
+                      }`}
+                    >
+                      Booking Hours (Max {maxBookHour} hours)
+                    </FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={(value) => field.onChange(Number(value))}
+                        value={field.value.toString()}
+                      >
+                        <SelectTrigger
+                          className={`pt-6 ${
+                            hasError
+                              ? "border-danger-40 bg-transparent"
+                              : "bg-transparent border border-secondary-60"
+                          }`}
+                        >
+                          <SelectValue placeholder="Select booking hours" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: maxBookHour }, (_, i) => (
+                            <SelectItem key={i + 1} value={(i + 1).toString()}>
+                              {i + 1} hour{i + 1 > 1 ? "s" : ""}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage className="absolute right-3 top-0.5 text-danger-40 text-xs" />
+                  </FormItem>
+                );
               }}
             />
             <Button type="submit" className="w-full">
