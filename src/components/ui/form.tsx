@@ -97,7 +97,8 @@ const FormLabel = React.forwardRef<
       ref={ref}
       className={cn(
         error && "text-destructive",
-        "font-normal [&:has(+_input:-webkit-autofill)]:bg-transparent [&:has(+_input:-webkit-autofill)]:border-transparent [&:has(+_input:-webkit-autofill)]:text-black",
+        // Remove or replace the problematic text-black class
+        "font-normal [&:has(+_input:-webkit-autofill)]:bg-transparent [&:has(+_input:-webkit-autofill)]:border-transparent ",
         className
       )}
       htmlFor={formItemId}
