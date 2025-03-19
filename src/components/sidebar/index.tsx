@@ -8,14 +8,16 @@ import {
   Clock,
   FileText,
   Gift,
-  User,
   LogOut,
   Menu,
+  User as UserIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useMobile } from "@/hooks/use-mobile";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface NavItem {
   title: string;
@@ -36,23 +38,22 @@ const navSections: NavSection[] = [
       {
         title: "Overview",
         icon: LayoutGrid,
-        href: "#",
+        href: "/admin",
       },
       {
         title: "Schedule",
         icon: Clock,
-        href: "#",
+        href: "/admin/schedule",
       },
       {
-        title: "Transaction list",
+        title: "Transaction",
         icon: FileText,
-        href: "#",
-        active: true,
+        href: "/admin/transaction",
       },
       {
         title: "Voucher",
         icon: Gift,
-        href: "#",
+        href: "/admin/voucher",
       },
     ],
   },
@@ -61,18 +62,17 @@ const navSections: NavSection[] = [
     items: [
       {
         title: "User",
-        icon: User,
-        href: "#",
+        icon: UserIcon,
+        href: "/admin/user",
       },
     ],
   },
 ];
 
-export function Sidebar() {
+export function Sidebar({ user }: { user: User }) {
   const [isOpen, setIsOpen] = useState(true);
   const isMobile = useMobile();
-
-  // Close sidebar by default on mobile/tablet
+  const pathName = usePathname();
   useEffect(() => {
     if (isMobile) {
       setIsOpen(false);
@@ -107,14 +107,14 @@ export function Sidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-black text-white transition-transform duration-300",
+          "py-12 fixed inset-y-0 left-0 z-50 flex xl:w-[30vh] 2xl:w-[40vh] flex-col bg-black text-white transition-transform duration-300 px-10",
           isMobile && !isOpen && "-translate-x-full"
         )}
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="p-6 text-center">
-            <h1 className="text-xl font-semibold">Peak&Flow</h1>
+            <h1 className="text-h6 font-medium">Peak&Flow</h1>
           </div>
 
           {/* Navigation */}
@@ -124,19 +124,31 @@ export function Sidebar() {
                 <h2 className="text-xs tracking-wider text-gray-500 font-medium px-2">
                   {section.title}
                 </h2>
-                <ul className="space-y-1">
+                <ul className="space-y-2">
                   {section.items.map((item) => (
                     <li key={item.title}>
-                      <a
+                      <Link
                         href={item.href}
                         className={cn(
-                          "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
-                          item.active ? "bg-zinc-700/50" : "hover:bg-zinc-800"
+                          "flex items-center gap-6 px-6 py-4 rounded-lg text-body-lg xl:text-h6 transition-colors",
+                          pathName === item.href
+                            ? "bg-secondary-20 "
+                            : "hover:bg-secondary-80"
                         )}
                       >
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
-                      </a>
+                        <item.icon
+                          className={`${
+                            item.href === pathName ? "text-black" : "text-white"
+                          } w-5 h-5`}
+                        />
+                        <span
+                          className={`${
+                            item.href === pathName ? "text-black" : "text-white"
+                          }`}
+                        >
+                          {item.title}
+                        </span>
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -155,18 +167,16 @@ export function Sidebar() {
                 <AvatarFallback>JB</AvatarFallback>
               </Avatar>
               <div className="flex flex-col text-sm">
-                <span className="font-medium">Jaxson Botosh</span>
-                <span className="text-xs text-gray-400">
-                  jaxsonbotosh@gmail.com
-                </span>
+                <span className="font-medium">{user.name}</span>
+                <span className="text-xs text-gray-400">{user.email}</span>
               </div>
             </div>
             <Button
-              variant="outline"
-              className="w-full border-zinc-700 text-white hover:bg-zinc-800 hover:text-white"
+              size={isMobile ? "sm" : "lg"}
+              variant="secondary"
+              className="w-full flex items-center justify-center rounded-2xl py-4"
             >
-              <LogOut className="h-4 w-4 mr-2" />
-              <span>Logout</span>
+              <LogOut className="h-4 w-4 mr-2 rotate-180" />
             </Button>
           </div>
         </div>
