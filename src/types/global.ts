@@ -34,3 +34,10 @@ interface DecodedJWT {
   user_id: string;
   role: string;
 }
+
+interface Meta {
+  total_data: number;
+  total_page: number;
+  page: number;
+  limit: number;
+}
