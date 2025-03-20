@@ -1,6 +1,5 @@
 "use client";
 import useSession from "@/features/auth/hooks/use-session";
-import { formatJakartaTime } from "@/lib/date";
 import { generateTimeSlots } from "@/lib/time-slot";
 import { addDays, format, startOfWeek } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -28,6 +27,7 @@ export default function ScheduleContainer({ type }: { type: string }) {
   const { status } = UseNextAuthSession();
   const createTransaction = useCreateTransaction();
   const queryClient = useQueryClient();
+
   useEffect(() => {
     if (schedules?.gym) {
       const slots = generateTimeSlots(schedules.gym);
@@ -43,6 +43,7 @@ export default function ScheduleContainer({ type }: { type: string }) {
     setIsDialogOpen(false);
     setSelectedSlot(null);
   };
+
   const { data: availableSlotsData } = useAvailableSlots({
     serviceType: type,
     startDate: selectedDate || "",
@@ -54,16 +55,21 @@ export default function ScheduleContainer({ type }: { type: string }) {
       setMaxBookHour(availableSlotsData.count_available_slots || 0);
     }
   }, [availableSlotsData]);
+
   const handleSelectTimeSlot = (date: Date, time: string) => {
     const [hours] = time.split(":").map(Number);
+
+    // Create a date object in local time
     const selectedDate = new Date(date);
     selectedDate.setHours(hours, 0, 0, 0);
 
+    // Store the local time ISO string
     setSelectedDate(selectedDate.toISOString());
     setSelectedSlot(selectedDate.toISOString());
     setMaxBookHour(availableSlotsData?.count_available_slots || 0);
     setIsDialogOpen(true);
   };
+
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -77,9 +83,9 @@ export default function ScheduleContainer({ type }: { type: string }) {
         console.log(data);
         toast.success("Booking successful");
 
-        // Membuka tab baru dengan redirect_url jika tersedia
+        // Open new tab with redirect_url if available
         if (data.data.redirect_url) {
-          window.open(data.data.redirect_url, "_blank");
+          // window.open(data.data.redirect_url, "_blank");
           router.push(`/transaction/snap?snapToken=${data.data.snap_token}`);
         }
 
@@ -104,24 +110,27 @@ export default function ScheduleContainer({ type }: { type: string }) {
         <p className="text-h4 md:text-display-sm max-w-2xl">
           Select Your Preferred Date and Time for a Seamless Experience
         </p>
-        {/* {schedules?.gym && (
-          <p className="text-sm text-muted-foreground">
-            Gym Hours: {formatJakartaTime(schedules.gym.open_at, "HH:mm")} -{" "}
-            {formatJakartaTime(schedules.gym.close_at, "HH:mm")}
-          </p>
-        )} */}
       </div>
       <div className="flex justify-between items-center mb-6">
-        <div className="text-body-md md:text-h6 italic">WIB GMT+7</div>{" "}
+        <div className="text-body-md md:text-h6 italic">
+          {/* Display user's local timezone */}
+          {new Intl.DateTimeFormat().resolvedOptions().timeZone}
+        </div>
         <div className="flex items-center gap-4">
           <div className="text-display-sm italic">
             {format(startDate, "MMMM, d")}-{format(addDays(startDate, 3), "d")}
           </div>
           <div className="flex gap-2">
-            <button onClick={goToPreviousWeek} className="p-6 rounded-full border border-secondary-60 ">
+            <button
+              onClick={goToPreviousWeek}
+              className="p-6 rounded-full border border-secondary-60 "
+            >
               <ChevronLeft className="w-6 h-6" />
             </button>
-            <button onClick={goToNextWeek} className="p-6 rounded-full border border-secondary-60 ">
+            <button
+              onClick={goToNextWeek}
+              className="p-6 rounded-full border border-secondary-60 "
+            >
               <ChevronRight className="w-6 h-6" />
             </button>
           </div>

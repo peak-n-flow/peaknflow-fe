@@ -1,28 +1,40 @@
-import { format, parseISO } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
+import { format } from "date-fns";
 
-// Jakarta timezone (UTC+7)
-export const JAKARTA_TIMEZONE = "Asia/Jakarta";
-
-/**
- * Converts a UTC ISO string to Jakarta time
- */
-export function toJakartaTime(isoString: string) {
-  const date = parseISO(isoString);
-  return toZonedTime(date, JAKARTA_TIMEZONE);
+export function formatLocalTime(
+  dateString: string | Date,
+  formatStr: string
+): string {
+  const date =
+    typeof dateString === "string" ? new Date(dateString) : dateString;
+  return format(date, formatStr);
 }
 
-/**
- * Formats a date for display in Jakarta timezone
- */
-export function formatJakartaTime(isoString: string, formatStr: string) {
-  const jakartaTime = toJakartaTime(isoString);
-  return format(jakartaTime, formatStr);
-}
-
-/**
- * Converts a local date and time to a UTC ISO string
- */
-export function localToUTC(date: Date) {
+export function localToUTC(date: Date): string {
   return date.toISOString().replace(/\.\d{3}Z$/, "Z");
+}
+
+export function utcToLocal(utcDateString: string): Date {
+  const date = new Date(utcDateString);
+  return new Date(date);
+}
+
+export function formatToLocalISO(date: Date) {
+  const tzOffset = -date.getTimezoneOffset();
+  const offsetHours = String(Math.floor(Math.abs(tzOffset) / 60)).padStart(
+    2,
+    "0"
+  );
+  const offsetMinutes = String(Math.abs(tzOffset) % 60).padStart(2, "0");
+  const offsetSign = tzOffset >= 0 ? "+" : "-";
+
+  const formattedDate =
+    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}` +
+    `-${String(date.getDate()).padStart(2, "0")}T` +
+    `${String(date.getHours()).padStart(2, "0")}:` +
+    `${String(date.getMinutes()).padStart(2, "0")}:` +
+    `${String(date.getSeconds()).padStart(2, "0")}`;
+
+  return tzOffset === 0
+    ? `${formattedDate}Z`
+    : `${formattedDate}${offsetSign}${offsetHours}:${offsetMinutes}`;
 }

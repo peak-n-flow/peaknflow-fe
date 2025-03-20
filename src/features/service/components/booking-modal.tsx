@@ -27,12 +27,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { formatJakartaTime, localToUTC } from "@/lib/date";
+import { formatLocalTime, formatToLocalISO, localToUTC } from "@/lib/date";
 import { getId } from "@/lib/get-id";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { TransactionRequest } from "../types";
+import type { TransactionRequest } from "../types";
 
 const bookingFormSchema = z.object({
   name: z
@@ -80,7 +80,7 @@ export default function BookingModal({
       payment_method: "",
     },
   });
-  
+
   useEffect(() => {
     if (user) {
       form.reset({
@@ -95,17 +95,19 @@ export default function BookingModal({
 
   if (!selectedSlot) return null;
 
-  const formattedDate = formatJakartaTime(selectedSlot, "EEEE, MMMM d, yyyy");
-  const formattedTime = formatJakartaTime(selectedSlot, "h:mm a");
+  const formattedDate = formatLocalTime(selectedSlot, "EEEE, MMMM d, yyyy");
+  const formattedTime = formatLocalTime(selectedSlot, "h:mm a");
   const date = new Date(selectedSlot);
 
   const onSubmit = async (values: BookingFormValues) => {
+    const startDate = new Date(selectedSlot);
+    const endDate = new Date(startDate);
+    endDate.setHours(endDate.getHours() + values.hour);
+
     const transactionRequest: TransactionRequest = {
       service_id: getId(serviceType) ?? "",
-      start_at: new Date(selectedSlot).toISOString().replace(/\.\d{3}Z$/, "Z"),
-      end_at: localToUTC(
-        new Date(date.getTime() + values.hour * 60 * 60 * 1000)
-      ),
+      start_at: formatToLocalISO(startDate),
+      end_at: formatToLocalISO(endDate),
       payment_method: values.payment_method,
       user_name: values.name,
       user_email: values.email,

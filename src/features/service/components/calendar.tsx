@@ -1,4 +1,4 @@
-import React from "react";
+"use client";
 import {
   Table,
   TableBody,
@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
-import { Booking } from "../types";
+import type { Booking } from "../types";
 import { getTimeSlotWithStatus } from "@/lib/time-slot";
 import GymStatusLabel from "./gym-status-label";
 
@@ -66,26 +66,7 @@ export default function Calendar({
                         `}
                   >
                     {time}
-                    {booking && (
-                      // <div className="text-xs text-white mt-2">
-                      //   <div>
-                      //     •{" "}
-                      //     {booking.status === "closed"
-                      //       ? "Closed"
-                      //       : "Booked"}
-                      //   </div>
-                      //   <div className="mt-1 text-gray-400">
-                      //     {new Date(booking.start_at)
-                      //       .toUTCString()
-                      //       .slice(17, 22)}{" "}
-                      //     -
-                      //     {new Date(booking.end_at)
-                      //       .toUTCString()
-                      //       .slice(17, 22)}
-                      //   </div>
-                      // </div>
-                      <GymStatusLabel status={booking.status} />
-                    )}
+                    {booking && <GymStatusLabel status={booking.status} />}
                   </TableCell>
                 );
               })}
