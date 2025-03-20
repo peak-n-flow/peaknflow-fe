@@ -80,7 +80,7 @@ export default function BookingModal({
       payment_method: "",
     },
   });
-
+  
   useEffect(() => {
     if (user) {
       form.reset({
@@ -148,6 +148,7 @@ export default function BookingModal({
                     </FormLabel>
                     <FormControl>
                       <Input
+                        autoComplete="off"
                         placeholder="Enter your name"
                         {...field}
                         className={`pt-6 text-light-60 autofill-dark ${
@@ -181,6 +182,7 @@ export default function BookingModal({
                     </FormLabel>
                     <FormControl>
                       <Input
+                        autoComplete="off"
                         type="email"
                         placeholder="Enter your email"
                         {...field}
@@ -203,7 +205,7 @@ export default function BookingModal({
               render={({ field }) => {
                 const hasError = !!form.formState.errors.phone_number;
                 return (
-                  <FormItem className="relative pb-2">
+                  <FormItem className="relative">
                     <FormLabel
                       className={`absolute left-3 top-1 text-xs autofill-dark [&:has(+_input:-webkit-autofill)]:text-white ${
                         hasError
@@ -215,6 +217,7 @@ export default function BookingModal({
                     </FormLabel>
                     <FormControl>
                       <Input
+                        autoComplete="off"
                         placeholder="+62XXXXXXXXXX"
                         {...field}
                         className={`pt-6 text-light-60 autofill-dark ${
@@ -236,7 +239,7 @@ export default function BookingModal({
               render={({ field }) => {
                 const hasError = !!form.formState.errors.payment_method;
                 return (
-                  <FormItem className="relative pb-2">
+                  <FormItem className="relative">
                     <FormLabel
                       className={`text-white absolute left-3 top-1 text-xs ${
                         hasError ? "text-danger-40" : "text-white"
@@ -277,7 +280,7 @@ export default function BookingModal({
               render={({ field }) => {
                 const hasError = !!form.formState.errors.hour;
                 return (
-                  <FormItem className="relative pb-2">
+                  <FormItem className="relative">
                     <FormLabel
                       className={`text-white absolute left-3 top-1 text-xs h-12 ${
                         hasError ? "text-danger-40" : "text-white"
@@ -291,7 +294,7 @@ export default function BookingModal({
                         value={field.value.toString()}
                       >
                         <SelectTrigger
-                          className={`pt-6 ${
+                          className={`pt-6 h-12 ${
                             hasError
                               ? "border-danger-40 bg-transparent"
                               : "bg-transparent border border-secondary-60"

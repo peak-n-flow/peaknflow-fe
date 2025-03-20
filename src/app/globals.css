@@ -138,8 +138,6 @@ input:-webkit-autofill:active ~ label {
   color: #ffffff !important;
 }
 
-
-
 /* Autofill styles override */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -153,4 +151,8 @@ input:-webkit-autofill:active {
 
 .Label[class*="text-black"] {
   color: #ffffff !important;
+}
+
+input[data-autocompleted] {
+  background-color: transparent !important;
 }
