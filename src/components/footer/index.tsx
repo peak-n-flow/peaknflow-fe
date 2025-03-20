@@ -32,7 +32,7 @@ export default function Footer() {
 
   return (
     !disableNavbarFooter.includes(pathname) &&
-    disableNavbarFooter.includes("/admin") && (
+    !pathname.includes("/admin") && (
       <footer className="bg-secondary-60 py-10 md:py-20 flex flex-col gap-5 md:gap-10 font-light">
         <section className="container flex flex-col xl:flex-row w-full justify-between items-start">
           <Image
