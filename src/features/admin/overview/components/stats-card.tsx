@@ -15,7 +15,7 @@ icon: StaticImport;
   stats: string;
 }) {
   return (
-    <div className="p-4 md:p-6 flex flex-col gap-6 bg-white rounded-3xl max-w-52">
+    <div className="p-4 md:p-6 flex flex-col gap-6 bg-white rounded-3xl ">
       <div className="flex items-center gap-4 max-w-44">
         <div className="bg-primary-20 rounded-full p-2.5 ">
           <Image src={icon} width={24} height={24} alt="icon" />
