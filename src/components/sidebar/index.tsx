@@ -171,13 +171,15 @@ export function Sidebar({ user }: { user: User }) {
                 <span className="text-xs text-gray-400">{user.email}</span>
               </div>
             </div>
-            <Button
-              size={isMobile ? "sm" : "lg"}
-              variant="secondary"
-              className="w-full flex items-center justify-center rounded-2xl py-4"
-            >
-              <LogOut className="h-4 w-4 mr-2 rotate-180" />
-            </Button>
+            <Link href={"/auth/logout"}>
+              <Button
+                size={isMobile ? "sm" : "lg"}
+                variant="secondary"
+                className="w-full flex items-center justify-center rounded-2xl py-4"
+              >
+                <LogOut className="h-4 w-4 mr-2 rotate-180" />
+              </Button>
+            </Link>
           </div>
         </div>
       </aside>

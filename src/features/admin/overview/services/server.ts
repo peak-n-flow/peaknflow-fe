@@ -91,13 +91,12 @@ const getTransactionById = async (id: string) => {
 const getAllUser = async () => {
   try {
     const response = await api.get("/users");
-    return response.data.payload;
+    return response.data.payload.users;
   } catch (error) {
     console.log(error);
     return getErrorMessage(error);
   }
 };
-
 
 export {
   getAllUser,
