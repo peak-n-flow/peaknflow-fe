@@ -59,4 +59,5 @@ interface Transaction {
   payment_status: string;
   created_at: string;
   updated_at: string;
+  voucher_code: string;
 }

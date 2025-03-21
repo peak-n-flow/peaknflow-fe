@@ -8,7 +8,7 @@ const getTotalUser = async () => {
     const response = await api.get("/users");
     return response.data.payload.meta.total_data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return getErrorMessage(error);
   }
 };
@@ -79,9 +79,31 @@ const getAllTransactions = async () => {
   }
 };
 
+const getTransactionById = async (id: string) => {
+  try {
+    const response = await api.get(`/service-transactions/${id}`);
+    return response.data.payload.service_transaction;
+  } catch (error) {
+    return getErrorMessage(error);
+  }
+};
+
+const getAllUser = async () => {
+  try {
+    const response = await api.get("/users");
+    return response.data.payload;
+  } catch (error) {
+    console.log(error);
+    return getErrorMessage(error);
+  }
+};
+
+
 export {
+  getAllUser,
   getTotalUser,
   getTransactionsSummary,
   getTotalBookedHoursThisDay,
   getAllTransactions,
+  getTransactionById,
 };
