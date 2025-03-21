@@ -100,7 +100,10 @@ export default function TransactionDashboardContainer({
                       </Badge>
                     </TableCell>
                     <TableCell className="text-center">
-                      <Link href={`/admin/transactions/${transaction.id}`}>
+                      <Link
+                        href={`/admin/transactions/${transaction.id}`}
+                        className="flex justify-center items-center"
+                      >
                         <Image
                           src={DetailIcon}
                           alt="Detail"
