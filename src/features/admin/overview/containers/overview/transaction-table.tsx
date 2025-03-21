@@ -41,66 +41,74 @@ export default function TransactionTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {transactions.slice(0, 5).map((transaction, index) => {
-            const startTime = new Date(transaction.service_start_at);
-            const endTime = new Date(transaction.service_end_at);
-            const formattedTime = `${startTime
-              .toLocaleTimeString("id-ID", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })
-              .replace(".", ":")}-${endTime
-              .toLocaleTimeString("id-ID", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })
-              .replace(".", ":")} ${startTime.toISOString().split("T")[0]}`;
+          {transactions.length > 0 ? (
+            transactions.slice(0, 5).map((transaction, index) => {
+              const startTime = new Date(transaction.service_start_at);
+              const endTime = new Date(transaction.service_end_at);
+              const formattedTime = `${startTime
+                .toLocaleTimeString("id-ID", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+                .replace(".", ":")}-${endTime
+                .toLocaleTimeString("id-ID", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+                .replace(".", ":")} ${startTime.toISOString().split("T")[0]}`;
 
-            return (
-              <TableRow key={index}>
-                <TableCell className="text-center">
-                  {transaction.code}
-                </TableCell>
-                <TableCell className="text-center">
-                  {transaction.code}
-                </TableCell>
-                <TableCell className="text-center">
-                  {transaction.service_name}
-                </TableCell>
-                <TableCell className="text-center">{formattedTime}</TableCell>
-                <TableCell className="text-center">
-                  {transaction.final_price}
-                </TableCell>
-                <TableCell className="flex justify-center items-center">
-                  <Badge
-                    variant={
-                      transaction.payment_status === "pending"
-                        ? "secondary"
-                        : transaction.payment_status === "success"
-                        ? "default"
-                        : "destructive"
-                    }
-                    className="flex items-center gap-1.5"
-                  >
-                    <div
-                      className={`w-1.5 h-1.5 rounded-full ${
+              return (
+                <TableRow key={index}>
+                  <TableCell className="text-center">
+                    {transaction.code}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {transaction.user_name}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {transaction.service_name}
+                  </TableCell>
+                  <TableCell className="text-center">{formattedTime}</TableCell>
+                  <TableCell className="text-center">
+                    {transaction.final_price}
+                  </TableCell>
+                  <TableCell className="flex justify-center items-center">
+                    <Badge
+                      variant={
                         transaction.payment_status === "pending"
-                          ? "bg-[#FFBD00]"
+                          ? "secondary"
                           : transaction.payment_status === "success"
-                          ? "bg-[#037847]"
-                          : "bg-destructive"
-                      }`}
-                    />
-                    {transaction.payment_status === "pending"
-                      ? "Proses"
-                      : transaction.payment_status === "success"
-                      ? "Sukses"
-                      : "Gagal"}
-                  </Badge>
-                </TableCell>
-              </TableRow>
-            );
-          })}
+                          ? "default"
+                          : "destructive"
+                      }
+                      className="flex items-center gap-1.5"
+                    >
+                      <div
+                        className={`w-1.5 h-1.5 rounded-full ${
+                          transaction.payment_status === "pending"
+                            ? "bg-[#FFBD00]"
+                            : transaction.payment_status === "success"
+                            ? "bg-[#037847]"
+                            : "bg-destructive"
+                        }`}
+                      />
+                      {transaction.payment_status === "pending"
+                        ? "Proses"
+                        : transaction.payment_status === "success"
+                        ? "Sukses"
+                        : "Gagal"}
+                    </Badge>
+                  </TableCell>
+                </TableRow>
+              );
+            })
+          ) : (
+            <TableRow>
+              <TableCell colSpan={6} className="text-center py-4">
+                Data Is Empty
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </div>

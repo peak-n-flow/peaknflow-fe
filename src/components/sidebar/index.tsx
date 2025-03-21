@@ -50,11 +50,11 @@ const navSections: NavSection[] = [
         icon: FileText,
         href: "/admin/transaction",
       },
-      {
-        title: "Voucher",
-        icon: Gift,
-        href: "/admin/voucher",
-      },
+      // {
+      //   title: "Voucher",
+      //   icon: Gift,
+      //   href: "/admin/voucher",
+      // },
     ],
   },
   {
