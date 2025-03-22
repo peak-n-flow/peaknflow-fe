@@ -40,13 +40,14 @@ const bookingFormSchema = z.object({
     .min(2, { message: "Name must be at least 2 characters." })
     .max(50, { message: "Name must not exceed 50 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
-  phone_number: z
-    .string()
-    .min(10, { message: "Phone number must be at least 10 digits." }),
+  phone_number: z.string().regex(/^\+\d{10,15}$/, {
+    message:
+      "Must format (e.g., +62XXXXXXXXXX).",
+  }),
   hour: z.number().min(1, { message: "Hour must be at least 1." }),
-  payment_method: z
-    .string()
-    .nonempty({ message: "Please select a payment method." }),
+  // payment_method: z
+  //   .string()
+  //   .nonempty({ message: "Please select a payment method." }),
 });
 
 type BookingFormValues = z.infer<typeof bookingFormSchema>;
@@ -77,7 +78,6 @@ export default function BookingModal({
       email: user?.email ?? "",
       phone_number: user?.phone_number ?? "",
       hour: 1,
-      payment_method: "",
     },
   });
 
@@ -88,7 +88,6 @@ export default function BookingModal({
         email: user.email ?? "",
         phone_number: user.phone_number ?? "",
         hour: 1,
-        payment_method: "",
       });
     }
   }, [user, form]);
@@ -108,7 +107,6 @@ export default function BookingModal({
       service_id: getId(serviceType) ?? "",
       start_at: formatToLocalISO(startDate),
       end_at: formatToLocalISO(endDate),
-      payment_method: values.payment_method,
       user_name: values.name,
       user_email: values.email,
       user_phone_number: values.phone_number,
@@ -235,7 +233,7 @@ export default function BookingModal({
               }}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="payment_method"
               render={({ field }) => {
@@ -275,7 +273,7 @@ export default function BookingModal({
                   </FormItem>
                 );
               }}
-            />
+            /> */}
             <FormField
               control={form.control}
               name="hour"
