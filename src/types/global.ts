@@ -61,3 +61,9 @@ interface Transaction {
   updated_at: string;
   voucher_code: string;
 }
+
+interface Window {
+  snap: {
+    pay: (token: string, options: any) => void;
+  };
+}
