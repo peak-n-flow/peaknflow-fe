@@ -41,3 +41,9 @@ interface Meta {
   page: number;
   limit: number;
 }
+
+interface Window {
+  snap: {
+    pay: (token: string, options: any) => void;
+  };
+}
