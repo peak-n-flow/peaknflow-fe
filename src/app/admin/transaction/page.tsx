@@ -2,7 +2,22 @@ import TransactionDashboardContainer from "@/features/admin/overview/containers/
 import { getAllTransactions } from "@/features/admin/overview/services/server";
 import React from "react";
 
-export default async function TrransactionAdminDashboardPage() {
-  const transactions = await getAllTransactions();
-  return <TransactionDashboardContainer transactions={transactions??[]} />;
+export default async function TrransactionAdminDashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page: number; search: string }>;
+}) {
+  const limit = 10;
+  const { page, search } = await searchParams;
+  const transactions = await getAllTransactions(page, limit, search);
+
+  return (
+    <>
+      {typeof transactions === "object" ? (
+        <TransactionDashboardContainer transactions={transactions} />
+      ) : (
+        <div>Error loading transactions</div>
+      )}
+    </>
+  );
 }

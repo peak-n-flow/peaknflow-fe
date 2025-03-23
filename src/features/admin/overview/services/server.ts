@@ -70,10 +70,19 @@ const getTotalBookedHoursThisDay = async () => {
   }
 };
 
-const getAllTransactions = async () => {
+const getAllTransactions = async (page = 1, limit = 10, search = "") => {
   try {
-    const response = await api.get("/service-transactions");
-    return response.data.payload.service_transactions;
+    const response = await api.get("/service-transactions", {
+      params: {
+        limit,
+        page,
+        search,
+      },
+    });
+    return {
+      transactions: response.data.payload.service_transactions as Transaction[],
+      meta: response.data.payload.meta as Meta,
+    };
   } catch (error) {
     return getErrorMessage(error);
   }
@@ -88,13 +97,22 @@ const getTransactionById = async (id: string) => {
   }
 };
 
-const getAllUser = async () => {
+const getAllUser = async (page = 1, limit = 10) => {
   try {
-    const response = await api.get("/users");
-    return response.data.payload.users;
+    const response = await api.get("/users", {
+      params: {
+        limit,
+        page,
+      },
+    });
+
+    return {
+      users: response.data.payload.users as User[],
+      meta: response.data.payload.meta as Meta,
+    };
   } catch (error) {
     console.log(error);
-    return getErrorMessage(error);
+    throw new Error(getErrorMessage(error));
   }
 };
 

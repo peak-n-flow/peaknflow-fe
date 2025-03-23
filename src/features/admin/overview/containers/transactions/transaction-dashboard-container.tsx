@@ -1,5 +1,9 @@
-import React from "react";
+"use client";
+import DetailIcon from "@/assets/icons/detail.svg";
+import { Pagination } from "@/components/pagination";
+import { SearchInput } from "@/components/search/input";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -8,18 +12,35 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useSearchQuery } from "@/hooks/use-search-query";
+import { Search } from "lucide-react";
 import Image from "next/image";
-import DetailIcon from "@/assets/icons/detail.svg";
 import Link from "next/link";
 
 export default function TransactionDashboardContainer({
   transactions,
 }: {
-  transactions: Transaction[];
+  transactions: { transactions: Transaction[]; meta: Meta };
 }) {
+  const handleSearchChange = useSearchQuery("search", 300);
+
   return (
-    <main className="flex flex-col gap-5 overflow-x-auto">
-      <h2 className="text-h5">Transaction</h2>
+    <main className="flex flex-col gap-5 overflow-x-auto w-full">
+      <div className="flex w-full flex-col md:flex-row gap-8 justify-between items-center h-8 py-9">
+        <h2 className="text-h5">Transaction</h2>
+        {/* <div className="max-w-screen-sm w-full mr-4 flex items-center gap-3 bg-transparent border-light-100 border rounded-lg">
+          <Search />
+          <Input
+            className="w-full bg-transparent h-8 border-0"
+            onChange={handleSearchChange}
+          />
+        </div> */}
+        <SearchInput
+          className="w-full bg-transparent h-10 bg-white max-w-screen-sm"
+          onChange={handleSearchChange}
+        />
+      </div>
+
       <div className="bg-white rounded-2xl flex flex-col gap-4 p-6">
         <span className="text-body-lg">List</span>
         <Table>
@@ -36,8 +57,8 @@ export default function TransactionDashboardContainer({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {transactions.length > 0 ? (
-              transactions.map((transaction, index) => {
+            {transactions.transactions.length > 0 ? (
+              transactions.transactions.map((transaction, index) => {
                 const startTime = new Date(transaction.service_start_at);
                 const endTime = new Date(transaction.service_end_at);
                 const formattedTime = `${startTime
@@ -123,6 +144,7 @@ export default function TransactionDashboardContainer({
             )}
           </TableBody>
         </Table>
+        <Pagination meta={transactions.meta} />
       </div>
     </main>
   );
