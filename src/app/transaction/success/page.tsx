@@ -1,9 +1,14 @@
 "use client";
 import React from "react";
-import Lottie from "lottie-react";
 import SuccessAnimation from "@/assets/animation/success.json";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+// Gunakan dynamic import agar hanya dijalankan di client-side
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+
+
 export default function TransactionSuccessPage() {
   return (
     <main className="flex min-h-screen justify-center items-center">

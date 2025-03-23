@@ -8,6 +8,7 @@ const getTotalUser = async () => {
     const response = await api.get("/users");
     return response.data.payload.meta.total_data;
   } catch (error) {
+    console.log(error);
     return getErrorMessage(error);
   }
 };
@@ -69,4 +70,61 @@ const getTotalBookedHoursThisDay = async () => {
   }
 };
 
-export { getTotalUser, getTransactionsSummary, getTotalBookedHoursThisDay };
+const getAllTransactions = async (page = 1, limit = 10, search = "") => {
+  try {
+    const response = await api.get("/service-transactions", {
+      params: {
+        sort_by: "created_at",
+        sort_order: "asc",
+        limit,
+        page,
+        search,
+      },
+    });
+    return {
+      transactions: response.data.payload.service_transactions as Transaction[],
+      meta: response.data.payload.meta as Meta,
+    };
+  } catch (error) {
+    return getErrorMessage(error);
+  }
+};
+
+const getTransactionById = async (id: string) => {
+  try {
+    const response = await api.get(`/service-transactions/${id}`);
+    
+    return response.data.payload.service_transaction;
+  } catch (error) {
+    return getErrorMessage(error);
+  }
+};
+
+const getAllUser = async (page = 1, limit = 10, search = "") => {
+  try {
+    const response = await api.get("/users", {
+      params: {
+        limit,
+        page,
+        search,
+      },
+    });
+
+    return {
+      users: response.data.payload.users as User[],
+      meta: response.data.payload.meta as Meta,
+    };
+  } catch (error) {
+    console.log(error);
+    throw new Error(getErrorMessage(error));
+  }
+};
+
+export {
+  getAllUser,
+  getTotalUser,
+  getTransactionsSummary,
+  getTotalBookedHoursThisDay,
+  getAllTransactions,
+  getTransactionById,
+};

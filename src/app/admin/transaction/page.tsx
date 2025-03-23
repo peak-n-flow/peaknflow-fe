@@ -1,5 +1,23 @@
+import TransactionDashboardContainer from "@/features/admin/overview/containers/transactions/transaction-dashboard-container";
+import { getAllTransactions } from "@/features/admin/overview/services/server";
 import React from "react";
 
-export default function TrransactionAdminDashboardPage() {
-  return <div>dashboard transaction</div>;
+export default async function TrransactionAdminDashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page: number; search: string }>;
+}) {
+  const limit = 10;
+  const { page, search } = await searchParams;
+  const transactions = await getAllTransactions(page, limit, search);
+
+  return (
+    <>
+      {typeof transactions === "object" ? (
+        <TransactionDashboardContainer transactions={transactions} />
+      ) : (
+        <div>Error loading transactions</div>
+      )}
+    </>
+  );
 }
