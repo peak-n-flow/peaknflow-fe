@@ -1,5 +1,6 @@
-import React from "react";
-import { Badge } from "@/components/ui/badge";
+"use client";
+import { Pagination } from "@/components/pagination";
+import { SearchInput } from "@/components/search/input";
 import {
   Table,
   TableBody,
@@ -8,14 +9,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Image from "next/image";
-import DetailIcon from "@/assets/icons/detail.svg";
-import Link from "next/link";
+import { useSearchQuery } from "@/hooks/use-search-query";
 
-export default function UserDashboardContainer({ users }: { users: User[] }) {
+export default function UserDashboardContainer({
+  users,
+}: {
+  users: {
+    users: User[];
+    meta: Meta;
+  };
+}) {
+  const handleSearchChange = useSearchQuery("search", 300);
   return (
     <main className="flex flex-col gap-5 overflow-x-auto">
-      <h2 className="text-h5">User</h2>
+      <div className="flex w-full flex-col md:flex-row gap-8 justify-between items-center h-8 py-9">
+        <h2 className="text-h5">User</h2>
+        <SearchInput onChange={handleSearchChange} />
+      </div>
+
       <div className="bg-white rounded-2xl flex flex-col gap-4 p-6">
         <span className="text-body-lg">List</span>
         <Table>
@@ -30,8 +41,8 @@ export default function UserDashboardContainer({ users }: { users: User[] }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.length > 0 ? (
-              users.map((user, index) => {
+            {users.users.length > 0 ? (
+              users.users.map((user, index) => {
                 return (
                   <TableRow key={index}>
                     <TableCell className="text-center">{user.id}</TableCell>
@@ -53,6 +64,7 @@ export default function UserDashboardContainer({ users }: { users: User[] }) {
             )}
           </TableBody>
         </Table>
+        <Pagination meta={users.meta} />
       </div>
     </main>
   );

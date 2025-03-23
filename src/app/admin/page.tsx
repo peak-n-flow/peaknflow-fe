@@ -25,7 +25,11 @@ export default async function DashboardAdminOverviewPage() {
           users={totalUsers}
         />
         <div className="col-span-3 overflow-x-auto">
-          <TransactionTable transactions={transactions} />
+          {typeof transactions === 'object' && transactions !== null ? (
+            <TransactionTable transactions={transactions.transactions} />
+          ) : (
+            <div>Error loading transactions</div>
+          )}
         </div>
       </section>
     </main>

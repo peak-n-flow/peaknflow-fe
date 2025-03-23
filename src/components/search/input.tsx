@@ -15,9 +15,9 @@ interface SearchInputProps {
 export function SearchInput({
   onChange,
   placeholder = "Search...",
-  className = "relative w-full max-w-xs",
+  className = "relative w-full max-w-screen-md h-10",
   inputClassName = "pl-8 w-full",
-  iconClassName = "absolute left-2.5 top-2.5 h-4 w-4 text-black",
+  iconClassName = "absolute left-2.5 top-4 h-4 w-4 text-black",
 }: SearchInputProps) {
   return (
     <div className={className}>

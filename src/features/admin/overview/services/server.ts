@@ -74,6 +74,8 @@ const getAllTransactions = async (page = 1, limit = 10, search = "") => {
   try {
     const response = await api.get("/service-transactions", {
       params: {
+        sort_by: "created_at",
+        sort_order: "asc",
         limit,
         page,
         search,
@@ -91,18 +93,20 @@ const getAllTransactions = async (page = 1, limit = 10, search = "") => {
 const getTransactionById = async (id: string) => {
   try {
     const response = await api.get(`/service-transactions/${id}`);
+    
     return response.data.payload.service_transaction;
   } catch (error) {
     return getErrorMessage(error);
   }
 };
 
-const getAllUser = async (page = 1, limit = 10) => {
+const getAllUser = async (page = 1, limit = 10, search = "") => {
   try {
     const response = await api.get("/users", {
       params: {
         limit,
         page,
+        search,
       },
     });
 
