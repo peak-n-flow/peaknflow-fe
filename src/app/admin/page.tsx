@@ -1,11 +1,11 @@
-import StatsOverview from "@/features/admin/overview/containers/overview/stats-overview";
-import TransactionTable from "@/features/admin/overview/containers/overview/transaction-table";
+import StatsOverview from "@/features/admin/containers/overview/stats-overview";
+import TransactionTable from "@/features/admin/containers/overview/transaction-table";
 import {
   getAllTransactions,
   getTotalBookedHoursThisDay,
   getTotalUser,
   getTransactionsSummary,
-} from "@/features/admin/overview/services/server";
+} from "@/features/admin/services/server";
 import React from "react";
 
 export default async function DashboardAdminOverviewPage() {

@@ -1,5 +1,5 @@
 import { Sidebar } from "@/components/sidebar";
-import { fetchProfileWithRetry } from "@/features/admin/overview/services/server";
+import { fetchProfileWithRetry } from "@/features/admin/services/server";
 import { authOptions } from "@/lib/auth-options";
 import { decodeJwt } from "@/lib/decode";
 import { API_KEY, BASE_URL } from "@/lib/env";

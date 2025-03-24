@@ -11,6 +11,7 @@ import {
   LogOut,
   Menu,
   User as UserIcon,
+  BoxIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -44,6 +45,11 @@ const navSections: NavSection[] = [
         title: "Schedule",
         icon: Clock,
         href: "/admin/schedule",
+      },
+      {
+        title: "Service",
+        icon: BoxIcon,
+        href: "/admin/service",
       },
       {
         title: "Transaction",
