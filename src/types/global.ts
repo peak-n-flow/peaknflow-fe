@@ -23,6 +23,7 @@ interface Service {
   price: string;
   duration_in_minutes: number;
   created_at: string;
+  slot: number;
 }
 
 interface ErrorAPI {

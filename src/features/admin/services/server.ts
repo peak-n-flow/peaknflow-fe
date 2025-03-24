@@ -151,6 +151,16 @@ const getAllUser = async (page = 1, limit = 10, search = "") => {
   }
 };
 
+const getGymServices = async () => {
+  try {
+    const response = await api.get("/services");
+
+    return response.data.payload.services as Service[];
+  } catch (error) {
+    return getErrorMessage(error);
+  }
+};
+
 export {
   fetchProfileWithRetry,
   getAllUser,
@@ -159,4 +169,5 @@ export {
   getTotalBookedHoursThisDay,
   getAllTransactions,
   getTransactionById,
+  getGymServices,
 };
