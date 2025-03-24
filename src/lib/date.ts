@@ -38,3 +38,12 @@ export function formatToLocalISO(date: Date) {
     ? `${formattedDate}Z`
     : `${formattedDate}${offsetSign}${offsetHours}:${offsetMinutes}`;
 }
+
+export function formatTime(isoString: string): string {
+  const date = new Date(isoString);
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
+
+console.log(formatTime("2025-04-29T17:00:00Z")); // Output: 00:00 (WIB)

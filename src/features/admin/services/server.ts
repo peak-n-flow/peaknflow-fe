@@ -161,6 +161,34 @@ const getGymServices = async () => {
   }
 };
 
+const getAllEvents = async (id: string) => {
+  try {
+    const response = await api.get(`/services/${id}/events`);
+    return response.data.payload.service_events as Event[];
+  } catch (error) {
+    return getErrorMessage(error);
+  }
+};
+
+const getEventById = async (id: string, eventId: string) => {
+  try {
+    const response = await api.get(`/services/${id}/events/${eventId}`);
+    console.log(response.data.payload.service_event);
+    return response.data.payload.service_event as Event;
+  } catch (error) {
+    return getErrorMessage(error);
+  }
+};
+
+const getServiceById = async (id: string) => {
+  try {
+    const response = await api.get(`/services/${id}`);
+    console.log(response.data.payload);
+    return response.data.payload.service;
+  } catch (error) {
+    return getErrorMessage(error);
+  }
+};
 export {
   fetchProfileWithRetry,
   getAllUser,
@@ -170,4 +198,7 @@ export {
   getAllTransactions,
   getTransactionById,
   getGymServices,
+  getAllEvents,
+  getServiceById,
+  getEventById,
 };

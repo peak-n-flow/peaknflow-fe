@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import {
   Table,
@@ -9,16 +10,18 @@ import {
 } from "@/components/ui/table";
 import Link from "next/link";
 import EditIcon from "@/assets/icons/edit.svg";
+import { usePathname } from "next/navigation";
 
 export default function ServiceDashboardContainer({
   services,
 }: {
   services: Service[];
 }) {
+  const pathName = usePathname();
   return (
     <main className="flex flex-col gap-5 overflow-x-auto">
       <div className="flex w-full flex-col md:flex-row gap-8 justify-between items-center h-8 py-9">
-        <h2 className="text-h5">User</h2>
+        <h2 className="text-h5">Service</h2>
         {/* <SearchInput onChange={handleSearchChange} /> */}
       </div>
 
@@ -64,7 +67,9 @@ export default function ServiceDashboardContainer({
                     </TableCell>
                     <TableCell className="text-center">
                       <div className="flex justify-center items-center">
-                        <EditIcon />
+                        <Link href={`${pathName}/${service.id}/edit`}>
+                          <EditIcon />
+                        </Link>
                       </div>
                     </TableCell>
                   </TableRow>
