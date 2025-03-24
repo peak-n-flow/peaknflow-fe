@@ -4,13 +4,17 @@ import React from "react";
 
 export default async function EventAdminDashboardPage({
   params,
+  searchParams,
 }: {
   params: Promise<{
     id: string;
   }>;
+  searchParams: Promise<{ page: number; search: string }>;
 }) {
   const { id } = await params;
-  const events = await getAllEvents(id);
+  const limit = 10;
+  const { page, search } = await searchParams;
+  const events = await getAllEvents(id, limit, page, search);
 
   if (typeof events === "string") {
     return <div>Error: {events}</div>;

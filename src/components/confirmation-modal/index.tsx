@@ -84,7 +84,9 @@ export function ConfirmationModal({
             )}
           </div>
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold">{title}</DialogTitle>
+            <DialogTitle className="text-h6 font-medium text-black">
+              {title}
+            </DialogTitle>
           </DialogHeader>
           <DialogDescription className="text-center pt-2">
             {description}

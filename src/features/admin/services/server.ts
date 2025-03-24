@@ -161,10 +161,24 @@ const getGymServices = async () => {
   }
 };
 
-const getAllEvents = async (id: string) => {
+const getAllEvents = async (
+  id: string,
+  limit: number,
+  page: number,
+  search = ""
+) => {
   try {
-    const response = await api.get(`/services/${id}/events`);
-    return response.data.payload.service_events as Event[];
+    const response = await api.get(`/services/${id}/events`, {
+      params: {
+        limit,
+        page,
+        search,
+      },
+    });
+    return {
+      events: response.data.payload.service_events as Event[],
+      meta: response.data.payload.meta as Meta,
+    };
   } catch (error) {
     return getErrorMessage(error);
   }

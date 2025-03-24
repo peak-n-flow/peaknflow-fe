@@ -18,11 +18,15 @@ import { ConfirmationModal } from "@/components/confirmation-modal";
 import { toast } from "sonner";
 import { deleteEvent } from "../../services/client";
 import { useRouter } from "next/navigation";
-
+import { Pagination } from "@/components/pagination";
+import { useSearchQuery } from "@/hooks/use-search-query";
+import { SearchInput } from "@/components/search/input";
+import Image from "next/image";
+import AlertImage from "@/assets/icons/alert-dialog.png";
 export default function EventDashboardContainer({
   events,
 }: {
-  events: Event[];
+  events: { events: Event[]; meta: Meta };
 }) {
   const router = useRouter();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -42,7 +46,7 @@ export default function EventDashboardContainer({
       try {
         await deleteEvent(eventToDelete.service_id, eventToDelete.id);
         toast.success("Event deleted successfully");
-        router.reload();
+        router.refresh();
       } catch (error) {
         toast.error(
           error instanceof Error ? error.message : "An unknown error occurred"
@@ -53,11 +57,12 @@ export default function EventDashboardContainer({
       }
     }
   };
+  const handleSearchChange = useSearchQuery();
   return (
     <main className="flex flex-col gap-5 overflow-x-auto">
       <div className="flex w-full flex-col md:flex-row gap-8 justify-between items-center h-8 py-9">
         <h2 className="text-h5">Service Events</h2>
-        {/* <SearchInput onChange={handleSearchChange} /> */}
+        <SearchInput onChange={handleSearchChange} />
 
         <Link href={`${pathName}/add`}>
           <Button>Add Events</Button>
@@ -80,8 +85,8 @@ export default function EventDashboardContainer({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {events.length > 0 ? (
-              events.map((event, index) => {
+            {events.events.length > 0 ? (
+              events.events.map((event, index) => {
                 return (
                   <TableRow key={index}>
                     <TableCell className="text-center">{event.name}</TableCell>
@@ -100,7 +105,7 @@ export default function EventDashboardContainer({
                       {formatTime(event.end_time)}
                     </TableCell>
                     <TableCell className="text-center">
-                      <div className="flex justify-center items-center">
+                      <div className="flex justify-center items-center gap-1">
                         <Link href={`${pathName}/${event.id}/edit`}>
                           <EditIcon />
                         </Link>
@@ -117,14 +122,14 @@ export default function EventDashboardContainer({
               })
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-4">
+                <TableCell colSpan={8} className="text-center py-4">
                   Data Is Empty
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
-        {/* <Pagination meta={users.meta} /> */}
+        <Pagination meta={events.meta} />
       </div>
       <ConfirmationModal
         isOpen={isDeleteModalOpen}
@@ -135,6 +140,7 @@ export default function EventDashboardContainer({
         cancelText="Kembali"
         confirmText="Iya, saya yakin"
         variant="delete"
+        icon={<Image src={AlertImage} alt="" />}
       />
     </main>
   );
