@@ -26,6 +26,7 @@ export interface TransactionRequest {
   user_name: string;
   user_email: string;
   user_phone_number: string;
+  quantity: number;
 }
 
 export interface Payment {

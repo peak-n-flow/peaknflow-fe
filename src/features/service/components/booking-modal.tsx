@@ -41,10 +41,10 @@ const bookingFormSchema = z.object({
     .max(50, { message: "Name must not exceed 50 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
   phone_number: z.string().regex(/^\+\d{10,15}$/, {
-    message:
-      "Must format (e.g., +62XXXXXXXXXX).",
+    message: "Must format (e.g., +62XXXXXXXXXX).",
   }),
   hour: z.number().min(1, { message: "Hour must be at least 1." }),
+  quantity: z.number().min(1, { message: "Quantity must be at least 1." }),
   // payment_method: z
   //   .string()
   //   .nonempty({ message: "Please select a payment method." }),
@@ -78,6 +78,7 @@ export default function BookingModal({
       email: user?.email ?? "",
       phone_number: user?.phone_number ?? "",
       hour: 1,
+      quantity: 1,
     },
   });
 
@@ -88,6 +89,7 @@ export default function BookingModal({
         email: user.email ?? "",
         phone_number: user.phone_number ?? "",
         hour: 1,
+        quantity: 1,
       });
     }
   }, [user, form]);
@@ -110,6 +112,7 @@ export default function BookingModal({
       user_name: values.name,
       user_email: values.email,
       user_phone_number: values.phone_number,
+      quantity: values.quantity,
     };
 
     await onConfirm(transactionRequest);
