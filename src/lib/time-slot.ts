@@ -1,24 +1,37 @@
 import type { Booking } from "@/features/service/types";
 import { parseISO } from "date-fns";
 
-export function generateTimeSlots(gym: Gym) {
+export function generateTimeSlots(gym: Gym, service: Service) {
   // Convert UTC times from API to local time
   const openAtUTC = parseISO(gym.open_at);
   const closeAtUTC = parseISO(gym.close_at);
 
   // Convert to local time
+  const duration = service.duration_in_minutes;
   const openAtLocal = new Date(openAtUTC);
   const closeAtLocal = new Date(closeAtUTC);
 
   const openHour = openAtLocal.getHours();
+  const openMinute = openAtLocal.getMinutes();
   let closeHour = closeAtLocal.getHours();
+  const closeMinute = closeAtLocal.getMinutes();
 
   const slots = [];
 
-  if (closeHour === 0) closeHour = 24;
+  if (closeHour === 0 && closeMinute === 0) closeHour = 24;
 
-  for (let hour = openHour; hour < closeHour; hour++) {
-    slots.push(`${hour.toString().padStart(2, "0")}:00`);
+  let currentTime = new Date(openAtLocal);
+
+  while (
+    currentTime.getHours() < closeHour ||
+    (currentTime.getHours() === closeHour && currentTime.getMinutes() < closeMinute)
+  ) {
+    const hours = currentTime.getHours().toString().padStart(2, "0");
+    const minutes = currentTime.getMinutes().toString().padStart(2, "0");
+    slots.push(`${hours}:${minutes}`);
+
+    // Increment by the service duration
+    currentTime = new Date(currentTime.getTime() + duration * 60 * 1000);
   }
 
   return slots;
