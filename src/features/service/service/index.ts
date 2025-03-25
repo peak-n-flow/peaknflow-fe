@@ -5,8 +5,18 @@ import { api } from "@/lib/axios";
 
 const getSchedule = async (serviceType: string) => {
   const serviceId = getId(serviceType);
+  const timeZone = "Asia/Jakarta";
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - 7);
+  const endDate = new Date();
+  endDate.setDate(endDate.getDate() + 30);
+  const startDateRFC = startDate.toISOString();
+  const endDateRFC = endDate.toISOString();
+
   try {
-    const response = await fetch(`/api/services/${serviceId}/bookings`);
+    const response = await fetch(
+      `/api/services/${serviceId}/bookings?time_zone=${timeZone}&after_at=${startDateRFC}&before_at=${endDateRFC}`
+    );
     return response.json();
   } catch (error) {
     return getErrorMessage(error);

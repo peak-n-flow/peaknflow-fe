@@ -10,7 +10,7 @@ type RouteParams = {
 };
 
 export async function GET(
-  _: NextRequest,
+  request: NextRequest,
   { params }: RouteParams
 ): Promise<NextResponse> {
   const { id } = await params;
@@ -21,8 +21,13 @@ export async function GET(
     });
   }
 
+  const url = new URL(request.url);
+  const searchParams = Object.fromEntries(url.searchParams.entries());
+
   try {
-    const response = await api.get(`/services/${id}/bookings`);
+    const response = await api.get(`/services/${id}/bookings`, {
+      params: searchParams,
+    });
 
     return NextResponse.json(response.data.payload as BookingListResponse);
   } catch (error) {
