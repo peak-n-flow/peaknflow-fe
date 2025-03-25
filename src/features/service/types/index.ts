@@ -7,6 +7,7 @@ export interface BookingListResponse {
   gym: Gym;
   service: Service;
   service_bookings: ServiceBookings;
+  service_events: Event[];
 }
 
 export type ServiceBookings = Record<string, Booking[]>;

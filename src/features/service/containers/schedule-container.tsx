@@ -1,19 +1,19 @@
 "use client";
 import useSession from "@/features/auth/hooks/use-session";
 import { generateTimeSlots } from "@/lib/time-slot";
+import { useQueryClient } from "@tanstack/react-query";
 import { addDays, format, startOfWeek } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useSession as UseNextAuthSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import BookingModal from "../components/booking-modal";
 import Calendar from "../components/calendar";
+import { useAvailableSlots } from "../hooks/use-available-slots";
 import useCreateTransaction from "../hooks/use-create-transaction";
 import { useSchedule } from "../hooks/use-schedule";
 import type { Booking, TransactionRequest } from "../types";
-import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
-import { useAvailableSlots } from "../hooks/use-available-slots";
-import { useRouter } from "next/navigation";
 
 export default function ScheduleContainer({ type }: { type: string }) {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -30,10 +30,10 @@ export default function ScheduleContainer({ type }: { type: string }) {
 
   useEffect(() => {
     if (schedules?.gym) {
-      const slots = generateTimeSlots(schedules.gym);
+      const slots = generateTimeSlots(schedules.gym, schedules.service);
       setTimeSlots(slots);
     }
-  }, [schedules?.gym]);
+  }, [schedules?.gym, schedules?.service.duration_in_minutes]);
 
   const goToPreviousWeek = () => setStartDate((prev) => addDays(prev, -4));
   const goToNextWeek = () => setStartDate((prev) => addDays(prev, 4));
@@ -137,6 +137,7 @@ export default function ScheduleContainer({ type }: { type: string }) {
         </div>
       </div>
       <Calendar
+        service={schedules?.service || {} as Service}
         bookings={
           isLoading
             ? {}
@@ -147,6 +148,7 @@ export default function ScheduleContainer({ type }: { type: string }) {
         dateRange={dateRange}
         timeSlots={timeSlots}
         onSelectTimeSlot={handleSelectTimeSlot}
+        serviceEvents={schedules?.service_events || []}
       />
       <BookingModal
         open={isDialogOpen}
