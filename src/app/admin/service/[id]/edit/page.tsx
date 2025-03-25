@@ -12,6 +12,5 @@ export default async function EditServicePage({
   const { id } = await params;
 
   const service = await getServiceById(id);
-  console.log(service);
-  return <ServiceForm id={id} />;
+  return <ServiceForm service={service} />;
 }

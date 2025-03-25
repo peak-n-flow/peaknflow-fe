@@ -154,7 +154,6 @@ const getAllUser = async (page = 1, limit = 10, search = "") => {
 const getGymServices = async () => {
   try {
     const response = await api.get("/services");
-
     return response.data.payload.services as Service[];
   } catch (error) {
     throw getErrorMessage(error);
@@ -197,7 +196,6 @@ const getEventById = async (id: string, eventId: string) => {
 const getServiceById = async (id: string) => {
   try {
     const response = await api.get(`/services/${id}`);
-    console.log(response.data.payload);
     return response.data.payload.service;
   } catch (error) {
     throw getErrorMessage(error);

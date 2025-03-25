@@ -1,5 +1,5 @@
 import { getErrorMessage } from "@/lib/error";
-import { EventRequest } from "../types";
+import { EventRequest, ServiceRequest } from "../types";
 import { api } from "@/lib/axios";
 
 // const createEvent = async (event: EventRequest, id: string) => {
@@ -54,4 +54,21 @@ const deleteEvent = async (id: string, eventId: string) => {
   }
 };
 
-export { createEvent, updateEvent, deleteEvent };
+const updateService = async (service: ServiceRequest, id: string) => {
+  try {
+    const response = await api.patch(`/services/${id}`, service);
+    return response.data.payload;
+  } catch (error) {
+    throw getErrorMessage(error);
+  }
+};
+const createService = async (service: ServiceRequest) => {
+  try {
+    const response = await api.post(`/services`, service);
+    return response.data.payload;
+  } catch (error) {
+    throw getErrorMessage(error);
+  }
+};
+
+export { createEvent, updateEvent, deleteEvent, updateService, createService };

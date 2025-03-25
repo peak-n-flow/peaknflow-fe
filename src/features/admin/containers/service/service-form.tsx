@@ -3,13 +3,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Form,
   FormControl,
@@ -17,25 +14,25 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { cn } from "@/lib/utils";
-import { EventRequest } from "../../types";
-import { createEvent } from "../../services/client";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
-// Update the form schema to handle price as a number
+import { createService, updateService } from "../../services/client";
+import type { ServiceRequest } from "../../types";
+import { GYM_ID } from "@/lib/env";
+
+// Define the Service type if it's not imported from elsewhere
+interface Service {
+  id?: string;
+  name: string;
+  price: number;
+  slot: number;
+  duration_in_minutes: number;
+  description: string;
+  gym_id: string;
+}
+
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
@@ -46,91 +43,70 @@ const formSchema = z.object({
   quota: z.string().regex(/^\d+$/, {
     message: "Quota must be a number.",
   }),
-  startDate: z.date({
-    required_error: "Start date is required.",
+  duration_in_minutes: z.string().regex(/^\d+$/, {
+    message: "Duration must be a number.",
   }),
-  endDate: z.date({
-    required_error: "End date is required.",
-  }),
-  startTime: z.string({
-    required_error: "Start time is required.",
-  }),
-  endTime: z.string({
-    required_error: "End time is required.",
+  description: z.string().min(2, {
+    message: "Description must be at least 2 characters.",
   }),
 });
 
-export default function ServiceForm({ id }: { id: string }) {
+export default function ServiceForm({ service }: { service?: Service }) {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      price: "",
-      quota: "",
-      startTime: "",
-      endTime: "",
+      name: service?.name ?? "",
+      price: service?.price?.toString() ?? "",
+      quota: service?.slot?.toString() ?? "",
+      duration_in_minutes: service?.duration_in_minutes?.toString() ?? "",
+      description: service?.description ?? "",
     },
   });
 
-  // Replace the onSubmit function with this updated version
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    // Get user's timezone offset in the format +HH:MM or -HH:MM
-    const getTimezoneOffset = () => {
-      const date = new Date();
-      const offset = -date.getTimezoneOffset(); // Negative because getTimezoneOffset returns opposite sign
-      const hours = Math.abs(Math.floor(offset / 60))
-        .toString()
-        .padStart(2, "0");
-      const minutes = Math.abs(offset % 60)
-        .toString()
-        .padStart(2, "0");
-      return `${offset >= 0 ? "+" : "-"}${hours}:${minutes}`;
-    };
-
-    const timezoneOffset = getTimezoneOffset();
-
-    // Format date with timezone
-    const formatDateWithTimezone = (date: Date, timeString: string) => {
-      const [hours, minutes] = timeString.split(":").map(Number);
-      const newDate = new Date(date);
-      newDate.setHours(hours, minutes, 0, 0);
-
-      // Format to RFC3339 with timezone
-      const year = newDate.getFullYear();
-      const month = (newDate.getMonth() + 1).toString().padStart(2, "0");
-      const day = newDate.getDate().toString().padStart(2, "0");
-      const hour = hours.toString().padStart(2, "0");
-      const minute = minutes.toString().padStart(2, "0");
-
-      return `${year}-${month}-${day}T${hour}:${minute}:00${timezoneOffset}`;
-    };
-
-    // Parse price to remove % if present and convert to number
-    const priceValue = Number.parseInt(values.price.replace("%", ""));
-
-    // Create the request payload
-    const requestPayload: EventRequest = {
-      name: values.name,
-      price: priceValue,
-      slot: Number.parseInt(values.quota),
-      start_time: formatDateWithTimezone(values.startDate, values.startTime),
-      end_time: formatDateWithTimezone(values.endDate, values.endTime),
-      start_date: formatDateWithTimezone(values.startDate, values.startTime),
-      end_date: formatDateWithTimezone(values.endDate, values.endTime),
-      is_event: false,
-    };
-
-    // Log the request payload
-    console.log("Form submission:", requestPayload);
-
-    // Here you would typically send the data to your API
     try {
-      await createEvent(requestPayload, id);
-      toast.success("Event created successfully");
+      // Log form values for debugging
+      console.log("Form values:", values);
+
+      // Handle price with percentage symbol
+      let priceValue = 0;
+      if (values.price.includes("%")) {
+        priceValue = Number.parseFloat(values.price.replace("%", ""));
+      } else {
+        priceValue = Number.parseInt(values.price);
+      }
+
+      // Check if GYM_ID is available
+      if (!GYM_ID) {
+        toast.error("Gym ID is not defined");
+        return;
+      }
+
+      const requestPayload: ServiceRequest = {
+        name: values.name,
+        price: priceValue,
+        slot: Number.parseInt(values.quota),
+        duration_in_minutes: Number.parseInt(values.duration_in_minutes),
+        gym_id: GYM_ID,
+        description: values.description,
+      };
+
+      console.log("Request payload:", requestPayload);
+
+      if (service?.id) {
+        await updateService(requestPayload, service.id);
+        toast.success("Service updated successfully");
+        router.push("/admin/service");
+      } else {
+        await createService(requestPayload);
+        toast.success("Service created successfully");
+        router.push("/admin/service");
+      }
     } catch (error) {
+      console.error("Form submission error:", error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to create event"
+        error instanceof Error ? error.message : "Failed to process service"
       );
     }
   }
@@ -150,7 +126,7 @@ export default function ServiceForm({ id }: { id: string }) {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input id="name" placeholder="Yoga Ashtanga" {...field} />
+                      <Input id="name" placeholder="Nama Servis" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -166,7 +142,27 @@ export default function ServiceForm({ id }: { id: string }) {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input id="price" placeholder="20%" {...field} />
+                      <Input id="price" placeholder="50000" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="duration_in_minutes">Duration in minutes</Label>
+              <FormField
+                control={form.control}
+                name="duration_in_minutes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        id="duration_in_minutes"
+                        placeholder="60"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -195,185 +191,40 @@ export default function ServiceForm({ id }: { id: string }) {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="startDate">Start Date</Label>
-                <FormField
-                  control={form.control}
-                  name="startDate"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value ? (
-                                format(field.value, "PPP")
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="endDate">End Date</Label>
-                <FormField
-                  control={form.control}
-                  name="endDate"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value ? (
-                                format(field.value, "PPP")
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="startTime">Start Time</Label>
-                <FormField
-                  control={form.control}
-                  name="startTime"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select time" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Array.from({ length: 24 }).map((_, hour) =>
-                            [0, 30].map((minute) => {
-                              const timeValue = `${hour
-                                .toString()
-                                .padStart(2, "0")}:${minute
-                                .toString()
-                                .padStart(2, "0")}`;
-                              const displayTime = `${hour % 12 || 12}:${minute
-                                .toString()
-                                .padStart(2, "0")} ${hour < 12 ? "AM" : "PM"}`;
-                              return (
-                                <SelectItem key={timeValue} value={timeValue}>
-                                  {displayTime}
-                                </SelectItem>
-                              );
-                            })
-                          )}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="endTime">End Time</Label>
-                <FormField
-                  control={form.control}
-                  name="endTime"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select time" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Array.from({ length: 24 }).map((_, hour) =>
-                            [0, 30].map((minute) => {
-                              const timeValue = `${hour
-                                .toString()
-                                .padStart(2, "0")}:${minute
-                                .toString()
-                                .padStart(2, "0")}`;
-                              const displayTime = `${hour % 12 || 12}:${minute
-                                .toString()
-                                .padStart(2, "0")} ${hour < 12 ? "AM" : "PM"}`;
-                              return (
-                                <SelectItem key={timeValue} value={timeValue}>
-                                  {displayTime}
-                                </SelectItem>
-                              );
-                            })
-                          )}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        id="description"
+                        placeholder="Service description"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
             <div className="flex gap-4 pt-4">
-              <Button type="button" variant="outline" className="flex-1">
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1"
+                onClick={() => router.push("/admin/service")}
+              >
                 Kembali
               </Button>
               <Button
                 type="submit"
                 className="flex-1 bg-black text-white hover:bg-gray-800"
               >
-                Buat Event
+                {service?.id ? "Update Service" : "Buat Service"}
               </Button>
             </div>
           </form>

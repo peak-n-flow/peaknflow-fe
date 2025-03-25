@@ -4,7 +4,7 @@ import React from "react";
 
 export default async function ServiceAdminDashboardPage() {
   const services = await getGymServices();
-
+  console.log(services)
   if (typeof services === "string") {
     // handle the error case
     return <div>Error: {services}</div>;
