@@ -167,6 +167,7 @@ export default function EventForm({
       try {
         await createEvent(requestPayload, id);
         toast.success("Event created successfully");
+        router.push(`/admin/service/${id}/events`);
       } catch (error) {
         toast.error(
           error instanceof Error ? error.message : "Failed to create event"
@@ -413,7 +414,7 @@ export default function EventForm({
                 type="submit"
                 className="flex-1 bg-black text-white hover:bg-gray-800"
               >
-                Buat Event
+                {event?.id ? "Update Event" : "Create Event"}
               </Button>
             </div>
           </form>
