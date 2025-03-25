@@ -40,7 +40,7 @@ const getTotalUser = async () => {
     return response.data.payload.meta.total_data;
   } catch (error) {
     console.log(error);
-    return getErrorMessage(error);
+    throw getErrorMessage(error);
   }
 };
 
@@ -51,7 +51,7 @@ const getTransactionsSummary = async () => {
     );
     return response.data.payload.revenue;
   } catch (error) {
-    return getErrorMessage(error);
+    throw getErrorMessage(error);
   }
 };
 
@@ -97,7 +97,7 @@ const getTotalBookedHoursThisDay = async () => {
 
     return response.data.payload.meta.total_data;
   } catch (error) {
-    return getErrorMessage(error);
+    throw getErrorMessage(error);
   }
 };
 
@@ -117,7 +117,7 @@ const getAllTransactions = async (page = 1, limit = 10, search = "") => {
       meta: response.data.payload.meta as Meta,
     };
   } catch (error) {
-    return getErrorMessage(error);
+    throw getErrorMessage(error);
   }
 };
 
@@ -127,7 +127,7 @@ const getTransactionById = async (id: string) => {
 
     return response.data.payload.service_transaction;
   } catch (error) {
-    return getErrorMessage(error);
+    throw getErrorMessage(error);
   }
 };
 
@@ -157,7 +157,7 @@ const getGymServices = async () => {
 
     return response.data.payload.services as Service[];
   } catch (error) {
-    return getErrorMessage(error);
+    throw getErrorMessage(error);
   }
 };
 
@@ -180,7 +180,7 @@ const getAllEvents = async (
       meta: response.data.payload.meta as Meta,
     };
   } catch (error) {
-    return getErrorMessage(error);
+    throw getErrorMessage(error);
   }
 };
 
@@ -190,7 +190,7 @@ const getEventById = async (id: string, eventId: string) => {
     console.log(response.data.payload.service_event);
     return response.data.payload.service_event as Event;
   } catch (error) {
-    return getErrorMessage(error);
+    throw getErrorMessage(error);
   }
 };
 
@@ -200,7 +200,7 @@ const getServiceById = async (id: string) => {
     console.log(response.data.payload);
     return response.data.payload.service;
   } catch (error) {
-    return getErrorMessage(error);
+    throw getErrorMessage(error);
   }
 };
 export {
