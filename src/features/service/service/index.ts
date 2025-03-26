@@ -7,9 +7,9 @@ const getSchedule = async (serviceType: string) => {
   const serviceId = getId(serviceType);
   const timeZone = "Asia/Jakarta";
   const startDate = new Date();
-  startDate.setDate(startDate.getDate() - 7);
+  startDate.setDate(startDate.getDate() - 30);
   const endDate = new Date();
-  endDate.setDate(endDate.getDate() + 30);
+  endDate.setDate(endDate.getDate() + 60);
   const startDateRFC = startDate.toISOString();
   const endDateRFC = endDate.toISOString();
 
@@ -19,7 +19,7 @@ const getSchedule = async (serviceType: string) => {
     );
     return response.json();
   } catch (error) {
-    return getErrorMessage(error);
+    throw getErrorMessage(error);
   }
 };
 
@@ -58,7 +58,7 @@ const getAvailableTimeSlots = async (
     const data = await response.json();
     return data.data;
   } catch (error) {
-    return getErrorMessage(error);
+    throw getErrorMessage(error);
   }
 };
 
@@ -70,7 +70,7 @@ const getTransactionByCode = async (code: string) => {
     console.log(response.data);
     return response.data.payload;
   } catch (error) {
-    return getErrorMessage(error);
+    throw getErrorMessage(error);
   }
 };
 
