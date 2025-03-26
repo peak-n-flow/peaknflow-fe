@@ -27,7 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { formatLocalTime, formatToLocalISO, localToUTC } from "@/lib/date";
+import { formatToLocalISO } from "@/lib/date";
 import { getId } from "@/lib/get-id";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -60,6 +60,8 @@ interface BookingDialogProps {
   onConfirm: (transaction: TransactionRequest) => void;
   serviceType: string;
   maxBookHour: number;
+  durationInHour: number;
+  isClass?: boolean;
 }
 
 export default function BookingModal({
@@ -70,6 +72,8 @@ export default function BookingModal({
   user,
   serviceType,
   maxBookHour,
+  durationInHour,
+  isClass = false,
 }: BookingDialogProps) {
   const form = useForm<BookingFormValues>({
     resolver: zodResolver(bookingFormSchema),
@@ -95,10 +99,6 @@ export default function BookingModal({
   }, [user, form]);
 
   if (!selectedSlot) return null;
-
-  const formattedDate = formatLocalTime(selectedSlot, "EEEE, MMMM d, yyyy");
-  const formattedTime = formatLocalTime(selectedSlot, "h:mm a");
-  const date = new Date(selectedSlot);
 
   const onSubmit = async (values: BookingFormValues) => {
     const startDate = new Date(selectedSlot);
@@ -277,48 +277,105 @@ export default function BookingModal({
                 );
               }}
             /> */}
-            <FormField
-              control={form.control}
-              name="hour"
-              render={({ field }) => {
-                const hasError = !!form.formState.errors.hour;
-                return (
-                  <FormItem className="relative">
-                    <FormLabel
-                      className={`text-white absolute left-3 top-1 text-xs h-12 ${
-                        hasError ? "text-danger-40" : "text-white"
-                      }`}
-                    >
-                      Booking Hours (Max {maxBookHour} hours)
-                    </FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={(value) => field.onChange(Number(value))}
-                        value={field.value.toString()}
+            {isClass ? (
+              <FormField
+                control={form.control}
+                name="quantity"
+                render={({ field }) => {
+                  const hasError = !!form.formState.errors.hour;
+                  return (
+                    <FormItem className="relative">
+                      <FormLabel
+                        className={`text-white absolute left-3 top-1 text-xs h-12 ${
+                          hasError ? "text-danger-40" : "text-white"
+                        }`}
                       >
-                        <SelectTrigger
-                          className={`pt-6 h-12 ${
-                            hasError
-                              ? "border-danger-40 bg-transparent"
-                              : "bg-transparent border border-secondary-60"
-                          }`}
+                        Quantity (Max {maxBookHour} people)
+                      </FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={(value) =>
+                            field.onChange(Number(value))
+                          }
+                          value={field.value.toString()}
                         >
-                          <SelectValue placeholder="Select booking hours" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Array.from({ length: maxBookHour }, (_, i) => (
-                            <SelectItem key={i + 1} value={(i + 1).toString()}>
-                              {i + 1} hour{i + 1 > 1 ? "s" : ""}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage className="absolute right-3 top-0.5 text-danger-40 text-xs" />
-                  </FormItem>
-                );
-              }}
-            />
+                          <SelectTrigger
+                            className={`pt-6 h-12 ${
+                              hasError
+                                ? "border-danger-40 bg-transparent"
+                                : "bg-transparent border border-secondary-60"
+                            }`}
+                          >
+                            <SelectValue placeholder="Select booking hours" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.from({ length: maxBookHour }, (_, i) => (
+                              <SelectItem
+                                key={i + 1}
+                                value={(i + 1).toString()}
+                              >
+                                {i + 1} hour{i + 1 > 1 ? "s" : ""}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage className="absolute right-3 top-0.5 text-danger-40 text-xs" />
+                    </FormItem>
+                  );
+                }}
+              />
+            ) : (
+              <FormField
+                control={form.control}
+                name="hour"
+                render={({ field }) => {
+                  const hasError = !!form.formState.errors.hour;
+                  return (
+                    <FormItem className="relative">
+                      <FormLabel
+                        className={`text-white absolute left-3 top-1 text-xs h-12 ${
+                          hasError ? "text-danger-40" : "text-white"
+                        }`}
+                      >
+                        Booking Hours (Max {maxBookHour} hours)
+                      </FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={(value) =>
+                            field.onChange(Number(value))
+                          }
+                          value={field.value.toString()}
+                        >
+                          <SelectTrigger
+                            className={`pt-6 h-12 ${
+                              hasError
+                                ? "border-danger-40 bg-transparent"
+                                : "bg-transparent border border-secondary-60"
+                            }`}
+                          >
+                            <SelectValue placeholder="Select booking hours" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.from({ length: maxBookHour }, (_, i) => (
+                              <SelectItem
+                                key={i + 1}
+                                value={(i + 1).toString()}
+                              >
+                                {i + 1 * durationInHour} hour
+                                {i + 1 > 1 ? "s" : ""}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage className="absolute right-3 top-0.5 text-danger-40 text-xs" />
+                    </FormItem>
+                  );
+                }}
+              />
+            )}
+
             <Button type="submit" className="w-full">
               Reservasi Sekarang
             </Button>

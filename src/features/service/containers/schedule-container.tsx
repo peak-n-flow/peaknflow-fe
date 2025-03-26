@@ -15,7 +15,13 @@ import useCreateTransaction from "../hooks/use-create-transaction";
 import { useSchedule } from "../hooks/use-schedule";
 import type { Booking, TransactionRequest } from "../types";
 
-export default function ScheduleContainer({ type }: { type: string }) {
+export default function ScheduleContainer({
+  type,
+  isClass = false,
+}: {
+  type: string;
+  isClass?: boolean;
+}) {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const router = useRouter();
   const { data: schedules, refetch } = useSchedule({ serviceType: type });
@@ -24,6 +30,7 @@ export default function ScheduleContainer({ type }: { type: string }) {
   );
   const [maxBookHour, setMaxBookHour] = useState(0);
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
+  const [durationInHour, setDurationInHour] = useState<number>(0);
   const { status } = UseNextAuthSession();
   const createTransaction = useCreateTransaction();
   const queryClient = useQueryClient();
@@ -32,8 +39,9 @@ export default function ScheduleContainer({ type }: { type: string }) {
     if (schedules?.gym) {
       const slots = generateTimeSlots(schedules.gym, schedules.service);
       setTimeSlots(slots);
+      setDurationInHour(schedules.service?.duration_in_minutes / 60);
     }
-  }, [schedules?.gym, schedules?.service.duration_in_minutes]);
+  }, [schedules?.gym, schedules?.service?.duration_in_minutes]);
 
   const goToPreviousWeek = () => setStartDate((prev) => addDays(prev, -4));
   const goToNextWeek = () => setStartDate((prev) => addDays(prev, 4));
@@ -137,7 +145,7 @@ export default function ScheduleContainer({ type }: { type: string }) {
         </div>
       </div>
       <Calendar
-        service={schedules?.service || {} as Service}
+        service={schedules?.service || ({} as Service)}
         bookings={
           isLoading
             ? {}
@@ -158,6 +166,8 @@ export default function ScheduleContainer({ type }: { type: string }) {
         user={!isLoading && status === "authenticated" ? data.user : null}
         serviceType={type}
         maxBookHour={maxBookHour}
+        durationInHour={durationInHour}
+        isClass={isClass}
       />
     </section>
   );
