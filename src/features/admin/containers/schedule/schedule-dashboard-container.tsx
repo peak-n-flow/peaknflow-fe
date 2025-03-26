@@ -20,7 +20,7 @@ export default function ScheduleDashboardContainer() {
 
   useEffect(() => {
     if (schedules?.gym) {
-      const slots = generateTimeSlots(schedules.gym);
+      const slots = generateTimeSlots(schedules.gym,schedules.service);
       setTimeSlots(slots);
     }
   }, [schedules?.gym]);

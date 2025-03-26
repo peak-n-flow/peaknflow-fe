@@ -98,7 +98,7 @@ export default function Calendar({
                       })
                     : activeEvents[0];
 
-                const isSlotSelectable = !booking && !selectedEvent;
+                const isSlotSelectable = !booking;
 
                 return (
                   <TableCell
@@ -121,9 +121,10 @@ export default function Calendar({
                     {time}
                     {booking && <GymStatusLabel status={booking.status} />}
                     {selectedEvent ? (
-                        <p className="text-white text-sm">
-                          {selectedEvent.name} - Rp. {selectedEvent.price}
-                        </p>
+                      <p className="text-white text-sm">
+                        {selectedEvent.name} - Rp. {selectedEvent.price} -{" "}
+                        {selectedEvent.slot}
+                      </p>
                     ) : (
                       <p className="text-white text-sm">Rp. {service.price}</p>
                     )}

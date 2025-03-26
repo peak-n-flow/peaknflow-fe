@@ -43,11 +43,8 @@ const bookingFormSchema = z.object({
   phone_number: z.string().regex(/^\+\d{10,15}$/, {
     message: "Must format (e.g., +62XXXXXXXXXX).",
   }),
-  hour: z.number().min(1, { message: "Hour must be at least 1." }),
+  hour: z.number().min(1, { message: "Hour must be at least 1." }).optional(),
   quantity: z.number().min(1, { message: "Quantity must be at least 1." }),
-  // payment_method: z
-  //   .string()
-  //   .nonempty({ message: "Please select a payment method." }),
 });
 
 type BookingFormValues = z.infer<typeof bookingFormSchema>;
@@ -81,7 +78,7 @@ export default function BookingModal({
       name: user?.name ?? "",
       email: user?.email ?? "",
       phone_number: user?.phone_number ?? "",
-      hour: 1,
+      hour: isClass ? undefined : durationInHour ?? 1,
       quantity: 1,
     },
   });
@@ -92,18 +89,29 @@ export default function BookingModal({
         name: user.name ?? "",
         email: user.email ?? "",
         phone_number: user.phone_number ?? "",
-        hour: 1,
+        hour: durationInHour ?? 1,
         quantity: 1,
       });
     }
   }, [user, form]);
+
+  useEffect(() => {
+    const subscription = form.watch((_, { name }) => {
+      if (name) {
+        console.log("Form errors:", form.formState.errors);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   if (!selectedSlot) return null;
 
   const onSubmit = async (values: BookingFormValues) => {
     const startDate = new Date(selectedSlot);
     const endDate = new Date(startDate);
-    endDate.setHours(endDate.getHours() + values.hour);
+    const hoursBooking = isClass ? durationInHour : values.hour ?? 1;
+    endDate.setHours(endDate.getHours() + hoursBooking);
 
     const transactionRequest: TransactionRequest = {
       service_id: getId(serviceType) ?? "",
@@ -112,7 +120,7 @@ export default function BookingModal({
       user_name: values.name,
       user_email: values.email,
       user_phone_number: values.phone_number,
-      quantity: values.quantity,
+      quantity: values.quantity ?? 1,
     };
 
     await onConfirm(transactionRequest);
@@ -237,52 +245,52 @@ export default function BookingModal({
             />
 
             {/* <FormField
-              control={form.control}
-              name="payment_method"
-              render={({ field }) => {
-                const hasError = !!form.formState.errors.payment_method;
-                return (
-                  <FormItem className="relative">
-                    <FormLabel
-                      className={`text-white absolute left-3 top-1 text-xs ${
-                        hasError ? "text-danger-40" : "text-white"
-                      }`}
-                    >
-                      Payment Method
-                    </FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
+                control={form.control}
+                name="payment_method"
+                render={({ field }) => {
+                  const hasError = !!form.formState.errors.payment_method;
+                  return (
+                    <FormItem className="relative">
+                      <FormLabel
+                        className={`text-white absolute left-3 top-1 text-xs ${
+                          hasError ? "text-danger-40" : "text-white"
+                        }`}
                       >
-                        <SelectTrigger
-                          className={`pt-6 h-12 ${
-                            hasError
-                              ? "border-danger-40 bg-transparent"
-                              : "bg-transparent border border-secondary-60"
-                          }`}
+                        Payment Method
+                      </FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
                         >
-                          <SelectValue placeholder="Select payment method" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="gopay">GoPay</SelectItem>
-                          <SelectItem value="mandiri_bank_transfer">
-                            Mandiri
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage className="absolute right-3 top-0.5 text-danger-40 text-xs" />
-                  </FormItem>
-                );
-              }}
-            /> */}
+                          <SelectTrigger
+                            className={`pt-6 h-12 ${
+                              hasError
+                                ? "border-danger-40 bg-transparent"
+                                : "bg-transparent border border-secondary-60"
+                            }`}
+                          >
+                            <SelectValue placeholder="Select payment method" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="gopay">GoPay</SelectItem>
+                            <SelectItem value="mandiri_bank_transfer">
+                              Mandiri
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage className="absolute right-3 top-0.5 text-danger-40 text-xs" />
+                    </FormItem>
+                  );
+                }}
+              /> */}
             {isClass ? (
               <FormField
                 control={form.control}
                 name="quantity"
                 render={({ field }) => {
-                  const hasError = !!form.formState.errors.hour;
+                  const hasError = !!form.formState.errors.quantity;
                   return (
                     <FormItem className="relative">
                       <FormLabel
@@ -297,7 +305,7 @@ export default function BookingModal({
                           onValueChange={(value) =>
                             field.onChange(Number(value))
                           }
-                          value={field.value.toString()}
+                          value={(field.value ?? "").toString()}
                         >
                           <SelectTrigger
                             className={`pt-6 h-12 ${
@@ -314,7 +322,7 @@ export default function BookingModal({
                                 key={i + 1}
                                 value={(i + 1).toString()}
                               >
-                                {i + 1} hour{i + 1 > 1 ? "s" : ""}
+                                {i + 1} people{i + 1 > 1 ? "s" : ""}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -345,7 +353,7 @@ export default function BookingModal({
                           onValueChange={(value) =>
                             field.onChange(Number(value))
                           }
-                          value={field.value.toString()}
+                          value={(field.value ?? "").toString()}
                         >
                           <SelectTrigger
                             className={`pt-6 h-12 ${
