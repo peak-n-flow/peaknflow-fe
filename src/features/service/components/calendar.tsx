@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getTimeSlotWithStatus } from "@/lib/time-slot";
+import { calculateAvailableSlots } from "@/lib/time-slot";
 import { addDays, differenceInDays, format, isWithinInterval } from "date-fns";
 import type { Booking } from "../types";
 import GymStatusLabel from "./gym-status-label";
@@ -53,6 +54,7 @@ export default function Calendar({
       slotHour < eventEndTime.getHours()
     );
   };
+
   return (
     <div className="overflow-auto">
       <Table>
@@ -98,7 +100,21 @@ export default function Calendar({
                       })
                     : activeEvents[0];
 
-                const isSlotSelectable = !booking;
+                // Calculate available slots
+                const availableSlots = calculateAvailableSlots(
+                  date.toISOString(),
+                  time,
+                  service,
+                  bookings,
+                  serviceEvents
+                );
+
+                // Modified: isSlotSelectable is true when there are available slots
+                // regardless of whether there are some bookings
+                const isSlotSelectable = availableSlots > 0;
+
+                // Determine if the slot is fully booked
+                const isFullyBooked = availableSlots === 0;
 
                 return (
                   <TableCell
@@ -110,23 +126,35 @@ export default function Calendar({
                       border border-secondary-60 
                       p-6 h-20 md:h-36 md:text-h1 text-center md:text-start relative w-[calc(100%/7)]  
                       ${
-                        !booking
+                        isSlotSelectable
                           ? "cursor-pointer hover:bg-primary-80"
-                          : booking.status === "closed"
+                          : booking?.status === "closed"
                           ? "cursor-not-allowed bg-secondary-100"
-                          : "bg-primary-100 cursor-not-allowed"
+                          : isFullyBooked
+                          ? "bg-primary-100 cursor-not-allowed"
+                          : "cursor-not-allowed"
                       }
                     `}
                   >
                     {time}
-                    {booking && <GymStatusLabel status={booking.status} />}
+                    {/* Only show GymStatusLabel when fully booked */}
+                    {isFullyBooked && <GymStatusLabel status="booked" />}
                     {selectedEvent ? (
-                      <p className="text-white text-sm">
-                        {selectedEvent.name} - Rp. {selectedEvent.price} -{" "}
-                        {selectedEvent.slot}
-                      </p>
+                      <div className="flex flex-col">
+                        <p className="text-white text-sm">
+                          {selectedEvent.name} - Rp. {selectedEvent.price}
+                        </p>
+                        <p className="text-white text-sm">
+                          {selectedEvent.slot > 1 &&
+                            `(${availableSlots}/${selectedEvent.slot} available)`}
+                        </p>
+                      </div>
                     ) : (
-                      <p className="text-white text-sm">Rp. {service.price}</p>
+                      <p className="text-white text-sm">
+                        Rp. {service.price}{" "}
+                        {service.slot > 1 &&
+                          `(${availableSlots}/${service.slot} available)`}
+                      </p>
                     )}
                   </TableCell>
                 );
