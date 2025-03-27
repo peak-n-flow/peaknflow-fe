@@ -26,7 +26,7 @@ export default function Calendar({
   timeSlots: string[];
   bookings: { [key: string]: Booking[] };
   serviceEvents: Event[];
-  onSelectTimeSlot: (date: Date, time: string) => void;
+  onSelectTimeSlot: (date: Date, time: string, availableSlots: number) => void;
 }) {
   // Function to check if an event is active for a specific date and time
   const isEventActiveForTimeSlot = (event: Event, date: Date, time: string) => {
@@ -120,7 +120,8 @@ export default function Calendar({
                   <TableCell
                     key={dateIndex}
                     onClick={() =>
-                      isSlotSelectable && onSelectTimeSlot(date, time)
+                      isSlotSelectable &&
+                      onSelectTimeSlot(date, time, availableSlots)
                     }
                     className={`
                       border border-secondary-60 

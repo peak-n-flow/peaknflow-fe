@@ -58,6 +58,7 @@ interface BookingDialogProps {
   serviceType: string;
   maxBookHour: number;
   durationInHour: number;
+  maxBookQuantity?: number;
   isClass?: boolean;
 }
 
@@ -70,6 +71,7 @@ export default function BookingModal({
   serviceType,
   maxBookHour,
   durationInHour,
+  maxBookQuantity,
   isClass = false,
 }: BookingDialogProps) {
   const form = useForm<BookingFormValues>({
@@ -298,7 +300,7 @@ export default function BookingModal({
                           hasError ? "text-danger-40" : "text-white"
                         }`}
                       >
-                        Quantity (Max {maxBookHour} people)
+                        Quantity (Max {maxBookQuantity} people)
                       </FormLabel>
                       <FormControl>
                         <Select
@@ -317,14 +319,17 @@ export default function BookingModal({
                             <SelectValue placeholder="Select booking hours" />
                           </SelectTrigger>
                           <SelectContent>
-                            {Array.from({ length: maxBookHour }, (_, i) => (
-                              <SelectItem
-                                key={i + 1}
-                                value={(i + 1).toString()}
-                              >
-                                {i + 1} people{i + 1 > 1 ? "s" : ""}
-                              </SelectItem>
-                            ))}
+                            {Array.from(
+                              { length: maxBookQuantity ?? 0 },
+                              (_, i) => (
+                                <SelectItem
+                                  key={i + 1}
+                                  value={(i + 1).toString()}
+                                >
+                                  {i + 1} people{i + 1 > 1 ? "s" : ""}
+                                </SelectItem>
+                              )
+                            )}
                           </SelectContent>
                         </Select>
                       </FormControl>

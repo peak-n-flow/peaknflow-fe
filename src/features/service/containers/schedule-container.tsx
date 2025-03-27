@@ -29,6 +29,7 @@ export default function ScheduleContainer({
     startOfWeek(new Date(), { weekStartsOn: 3 })
   );
   const [maxBookHour, setMaxBookHour] = useState(0);
+  const [maxBookQuantity, setMaxBookQuantity] = useState(0);
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
   const [durationInHour, setDurationInHour] = useState<number>(0);
   const { status } = UseNextAuthSession();
@@ -64,7 +65,11 @@ export default function ScheduleContainer({
     }
   }, [availableSlotsData]);
 
-  const handleSelectTimeSlot = (date: Date, time: string) => {
+  const handleSelectTimeSlot = (
+    date: Date,
+    time: string,
+    availableSlots: number
+  ) => {
     const [hours] = time.split(":").map(Number);
 
     // Create a date object in local time
@@ -74,6 +79,7 @@ export default function ScheduleContainer({
     // Store the local time ISO string
     setSelectedDate(selectedDate.toISOString());
     setSelectedSlot(selectedDate.toISOString());
+    setMaxBookQuantity(availableSlots);
     setMaxBookHour(availableSlotsData?.count_available_slots || 0);
     setIsDialogOpen(true);
   };
@@ -168,6 +174,7 @@ export default function ScheduleContainer({
         maxBookHour={maxBookHour}
         durationInHour={durationInHour}
         isClass={isClass}
+        maxBookQuantity={maxBookQuantity}
       />
     </section>
   );
