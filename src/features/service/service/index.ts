@@ -19,7 +19,7 @@ const getSchedule = async (serviceType: string) => {
     );
     return response.json();
   } catch (error) {
-    throw getErrorMessage(error);
+    throw new Error(getErrorMessage(error));
   }
 };
 
@@ -58,7 +58,7 @@ const getAvailableTimeSlots = async (
     const data = await response.json();
     return data.data;
   } catch (error) {
-    throw getErrorMessage(error);
+    throw new Error(getErrorMessage(error));
   }
 };
 
@@ -70,7 +70,7 @@ const getTransactionByCode = async (code: string) => {
     console.log(response.data);
     return response.data.payload;
   } catch (error) {
-    throw getErrorMessage(error);
+    throw new Error(getErrorMessage(error));
   }
 };
 
