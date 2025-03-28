@@ -1,21 +1,27 @@
 "use client";
 import useSession from "@/features/auth/hooks/use-session";
 import { generateTimeSlots } from "@/lib/time-slot";
+import { useQueryClient } from "@tanstack/react-query";
 import { addDays, format, startOfWeek } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useSession as UseNextAuthSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import BookingModal from "../components/booking-modal";
 import Calendar from "../components/calendar";
+import { useAvailableSlots } from "../hooks/use-available-slots";
 import useCreateTransaction from "../hooks/use-create-transaction";
 import { useSchedule } from "../hooks/use-schedule";
 import type { Booking, TransactionRequest } from "../types";
-import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
-import { useAvailableSlots } from "../hooks/use-available-slots";
-import { useRouter } from "next/navigation";
 
-export default function ScheduleContainer({ type }: { type: string }) {
+export default function ScheduleContainer({
+  type,
+  isClass = false,
+}: {
+  type: string;
+  isClass?: boolean;
+}) {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const router = useRouter();
   const { data: schedules, refetch } = useSchedule({ serviceType: type });
@@ -23,17 +29,20 @@ export default function ScheduleContainer({ type }: { type: string }) {
     startOfWeek(new Date(), { weekStartsOn: 3 })
   );
   const [maxBookHour, setMaxBookHour] = useState(0);
+  const [maxBookQuantity, setMaxBookQuantity] = useState(0);
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
+  const [durationInHour, setDurationInHour] = useState<number>(0);
   const { status } = UseNextAuthSession();
   const createTransaction = useCreateTransaction();
   const queryClient = useQueryClient();
 
   useEffect(() => {
     if (schedules?.gym) {
-      const slots = generateTimeSlots(schedules.gym);
+      const slots = generateTimeSlots(schedules.gym, schedules.service);
       setTimeSlots(slots);
+      setDurationInHour(schedules.service?.duration_in_minutes / 60);
     }
-  }, [schedules?.gym]);
+  }, [schedules?.gym, schedules?.service?.duration_in_minutes]);
 
   const goToPreviousWeek = () => setStartDate((prev) => addDays(prev, -4));
   const goToNextWeek = () => setStartDate((prev) => addDays(prev, 4));
@@ -56,7 +65,11 @@ export default function ScheduleContainer({ type }: { type: string }) {
     }
   }, [availableSlotsData]);
 
-  const handleSelectTimeSlot = (date: Date, time: string) => {
+  const handleSelectTimeSlot = (
+    date: Date,
+    time: string,
+    availableSlots: number
+  ) => {
     const [hours] = time.split(":").map(Number);
 
     // Create a date object in local time
@@ -66,6 +79,7 @@ export default function ScheduleContainer({ type }: { type: string }) {
     // Store the local time ISO string
     setSelectedDate(selectedDate.toISOString());
     setSelectedSlot(selectedDate.toISOString());
+    setMaxBookQuantity(availableSlots);
     setMaxBookHour(availableSlotsData?.count_available_slots || 0);
     setIsDialogOpen(true);
   };
@@ -137,6 +151,7 @@ export default function ScheduleContainer({ type }: { type: string }) {
         </div>
       </div>
       <Calendar
+        service={schedules?.service || ({} as Service)}
         bookings={
           isLoading
             ? {}
@@ -147,6 +162,7 @@ export default function ScheduleContainer({ type }: { type: string }) {
         dateRange={dateRange}
         timeSlots={timeSlots}
         onSelectTimeSlot={handleSelectTimeSlot}
+        serviceEvents={schedules?.service_events || []}
       />
       <BookingModal
         open={isDialogOpen}
@@ -156,6 +172,9 @@ export default function ScheduleContainer({ type }: { type: string }) {
         user={!isLoading && status === "authenticated" ? data.user : null}
         serviceType={type}
         maxBookHour={maxBookHour}
+        durationInHour={durationInHour}
+        isClass={isClass}
+        maxBookQuantity={maxBookQuantity}
       />
     </section>
   );

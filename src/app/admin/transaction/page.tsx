@@ -1,5 +1,5 @@
-import TransactionDashboardContainer from "@/features/admin/overview/containers/transactions/transaction-dashboard-container";
-import { getAllTransactions } from "@/features/admin/overview/services/server";
+import TransactionDashboardContainer from "@/features/admin/containers/transactions/transaction-dashboard-container";
+import { getAllTransactions } from "@/features/admin/services/server";
 import React from "react";
 
 export default async function TrransactionAdminDashboardPage({

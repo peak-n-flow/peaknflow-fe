@@ -23,6 +23,21 @@ interface Service {
   price: string;
   duration_in_minutes: number;
   created_at: string;
+  slot: number;
+}
+
+interface Event {
+  id: string;
+  name: string;
+  price: string;
+  is_event: boolean;
+  slot: number;
+  start_time: string;
+  end_time: string;
+  start_date: string;
+  end_date: string;
+  service_id: string;
+  created_at: string;
 }
 
 interface ErrorAPI {

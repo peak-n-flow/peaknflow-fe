@@ -7,14 +7,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { differenceInDays, format } from "date-fns";
 import {
+  calculateAvailableSlots,
   getTimeSlotWithStatus,
   isEventActiveForTimeSlot,
 } from "@/lib/time-slot";
-import { calculateAvailableSlots } from "@/lib/time-slot";
-import { addDays, differenceInDays, format, isWithinInterval } from "date-fns";
-import type { Booking } from "../types";
-import GymStatusLabel from "./gym-status-label";
+import { Booking } from "@/features/service/types";
+import GymStatusLabel from "@/features/service/components/gym-status-label";
+import { Badge } from "@/components/ui/badge";
 
 export default function Calendar({
   service,
@@ -27,19 +28,19 @@ export default function Calendar({
   service: Service;
   dateRange: Date[];
   timeSlots: string[];
-  bookings: { [key: string]: Booking[] };
   serviceEvents: Event[];
+  bookings: { [key: string]: Booking[] };
   onSelectTimeSlot: (date: Date, time: string, availableSlots: number) => void;
 }) {
   return (
     <div className="overflow-auto">
       <Table>
         <TableHeader>
-          <TableRow className="border-secondary-60 bg-transparent">
+          <TableRow className="border-[#EAECF0] bg-transparent">
             {dateRange.map((date, index) => (
               <TableHead
                 key={index}
-                className="border border-secondary-60 text-center text-white md:text-h4 h-20 md:h-36"
+                className="text-center text-black text-body-sm py-3"
               >
                 {format(date, "EEE, MMM d")}
               </TableHead>
@@ -47,8 +48,11 @@ export default function Calendar({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {timeSlots.map((time) => (
-            <TableRow className="border-secondary-60 bg-transparent" key={time}>
+          {timeSlots.map((time, timeIndex) => (
+            <TableRow
+              key={`${time}-${timeIndex}`}
+              className="border-[#EAECF0] bg-transparent"
+            >
               {dateRange.map((date, dateIndex) => {
                 const dateStr = format(date, "yyyy-MM-dd");
                 const booking = getTimeSlotWithStatus(dateStr, time, bookings);
@@ -94,45 +98,63 @@ export default function Calendar({
 
                 return (
                   <TableCell
-                    key={dateIndex}
+                    key={`${dateIndex}-${time}`}
                     onClick={() =>
                       isSlotSelectable &&
                       onSelectTimeSlot(date, time, availableSlots)
                     }
                     className={`
-                      border border-secondary-60 
-                      p-6 h-20 md:h-36 md:text-h1 text-center md:text-start relative w-[calc(100%/7)]  
-                      ${
-                        isSlotSelectable
-                          ? "cursor-pointer hover:bg-primary-80"
-                          : booking?.status === "closed"
-                          ? "cursor-not-allowed bg-secondary-100"
-                          : isFullyBooked
-                          ? "bg-primary-100 cursor-not-allowed"
-                          : "cursor-not-allowed"
-                      }
-                    `}
+                          relative text-center text-body-md 
+                          ${
+                            !booking
+                              ? "cursor-pointer hover:bg-light-40"
+                              : booking.status === "closed"
+                              ? "cursor-not-allowed "
+                              : "cursor-not-allowed"
+                          }
+                        `}
                   >
-                    {time}
-                    {/* Only show GymStatusLabel when fully booked */}
-                    {isFullyBooked && <GymStatusLabel status="booked" />}
-                    {selectedEvent ? (
-                      <div className="flex flex-col">
-                        <p className="text-white text-sm">
-                          {selectedEvent.name} - Rp. {selectedEvent.price}
-                        </p>
-                        <p className="text-white text-sm">
-                          {selectedEvent.slot > 1 &&
-                            `(${availableSlots}/${selectedEvent.slot} available)`}
-                        </p>
-                      </div>
-                    ) : (
-                      <p className="text-white text-sm">
-                        Rp. {service.price}{" "}
-                        {service.slot > 1 &&
-                          `(${availableSlots}/${service.slot} available)`}
-                      </p>
-                    )}
+                    <div className="flex justify-center items-center flex-col gap-1.5">
+                      {time}
+                      {isFullyBooked && (
+                        <Badge
+                          variant={
+                            booking?.status == "booked" ? "default" : "dark"
+                          }
+                          className="flex items-center gap-1.5"
+                        >
+                          <div
+                            className={`${
+                              booking?.status == "booked"
+                                ? "bg-[#037847]"
+                                : "bg-secondary-20"
+                            } w-1 h-1 rounded-full`}
+                          />
+                          {booking?.status == "booked" ? "Disewa" : "Tutup"}
+                        </Badge>
+                      )}
+                      {selectedEvent ? (
+                        <div className="flex flex-col">
+                          <p className="text-black text-sm">
+                            {selectedEvent.name} - Rp. {selectedEvent.price}
+                          </p>
+                          <p className="text-black text-sm">
+                            {selectedEvent.slot > 1 &&
+                              `(${availableSlots}/${selectedEvent.slot} available)`}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col gap-2">
+                          <p className="text-black text-sm">
+                            Rp. {service.price}{" "}
+                          </p>
+                          <p>
+                            {service.slot > 1 &&
+                              `(${availableSlots}/${service.slot} available)`}
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   </TableCell>
                 );
               })}

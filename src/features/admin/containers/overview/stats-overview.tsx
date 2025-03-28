@@ -16,19 +16,19 @@ export default function StatsOverview({
   return (
     <div className="col-span-1 grid gap-8 grid-cols-1 lg:grid-cols-3 xl:grid-cols-1 xl:gap-3">
       <StatsCard
-        icon={CalendarIcon}
+        icon={<CalendarIcon />}
         title="Reservasi Hari ini"
         count={reservations}
         stats="jam"
       />
       <StatsCard
-        icon={UserIcon}
+        icon={<UserIcon />}
         title="Total User"
         count={users}
         stats="User"
       />
       <StatsCard
-        icon={RevenueIcon}
+        icon={<RevenueIcon />}
         title="Total Pendapatan"
         count={income}
         stats="Rupiah"

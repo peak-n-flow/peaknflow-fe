@@ -1,5 +1,5 @@
-import UserDashboardContainer from "@/features/admin/overview/containers/user/user-dashboard-container";
-import { getAllUser } from "@/features/admin/overview/services/server";
+import UserDashboardContainer from "@/features/admin/containers/user/user-dashboard-container";
+import { getAllUser } from "@/features/admin/services/server";
 import React from "react";
 
 export default async function UserAdminDashboardPage({

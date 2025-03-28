@@ -125,11 +125,7 @@ export default function TransactionDashboardContainer({
                         href={`/admin/transaction/${transaction.id}`}
                         className="flex justify-center items-center"
                       >
-                        <Image
-                          src={DetailIcon}
-                          alt="Detail"
-                          className="cursor-pointer"
-                        />
+                        <DetailIcon />
                       </Link>
                     </TableCell>
                   </TableRow>

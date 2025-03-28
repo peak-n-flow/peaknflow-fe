@@ -16,7 +16,7 @@ export default async function YogaContainer() {
         description="Wellness is not just about working out. It is about connecting your body and mind. Our private yoga and Pilates studio enhances mobility, improves flexibility, and promotes mindfulness in a peaceful and intimate space. Focus on your movements, breathe deeply, and restore balance without distractions."
       />
       <ServiceOffer subservices={yogaSubservices} />
-      <ScheduleContainer type="yoga" />
+      <ScheduleContainer type="yoga" isClass={true} />
       <FAQContainer faqs={yogaPilatesFAQ} />
     </>
   );

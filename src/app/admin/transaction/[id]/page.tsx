@@ -1,5 +1,5 @@
-import TransactionDetailContainer from "@/features/admin/overview/containers/transactions/transaction-detail-container";
-import { getTransactionById } from "@/features/admin/overview/services/server";
+import TransactionDetailContainer from "@/features/admin/containers/transactions/transaction-detail-container";
+import { getTransactionById } from "@/features/admin/services/server";
 
 export default async function TransactionDetailAdminPage({
   params,
