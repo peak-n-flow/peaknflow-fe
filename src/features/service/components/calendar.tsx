@@ -7,7 +7,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getTimeSlotWithStatus } from "@/lib/time-slot";
+import {
+  getTimeSlotWithStatus,
+  isEventActiveForTimeSlot,
+} from "@/lib/time-slot";
 import { calculateAvailableSlots } from "@/lib/time-slot";
 import { addDays, differenceInDays, format, isWithinInterval } from "date-fns";
 import type { Booking } from "../types";
@@ -28,33 +31,6 @@ export default function Calendar({
   serviceEvents: Event[];
   onSelectTimeSlot: (date: Date, time: string, availableSlots: number) => void;
 }) {
-  // Function to check if an event is active for a specific date and time
-  const isEventActiveForTimeSlot = (event: Event, date: Date, time: string) => {
-    // Convert dates to local time
-    const eventStartDate = new Date(event.start_date);
-    const eventEndDate = new Date(event.end_date);
-    const currentDate = new Date(date);
-
-    // Check if the current date is within the event's date range
-    const isDateInRange = isWithinInterval(currentDate, {
-      start: eventStartDate,
-      end: addDays(eventEndDate, 1), // Add a day to include the end date
-    });
-
-    if (!isDateInRange) return false;
-
-    // Convert start_time and end_time to local time and extract hours
-    const eventStartTime = new Date(event.start_time);
-    const eventEndTime = new Date(event.end_time);
-    const [slotHour] = time.split(":").map(Number);
-
-    // Check if the time slot is within the event's time range
-    return (
-      slotHour >= eventStartTime.getHours() &&
-      slotHour < eventEndTime.getHours()
-    );
-  };
-
   return (
     <div className="overflow-auto">
       <Table>
