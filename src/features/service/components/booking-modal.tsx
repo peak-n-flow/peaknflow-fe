@@ -45,6 +45,7 @@ const bookingFormSchema = z.object({
   }),
   hour: z.number().min(1, { message: "Hour must be at least 1." }).optional(),
   quantity: z.number().min(1, { message: "Quantity must be at least 1." }),
+  payment_method: z.string().min(1, { message: "Payment method is required." }),
 });
 
 type BookingFormValues = z.infer<typeof bookingFormSchema>;
@@ -123,6 +124,7 @@ export default function BookingModal({
       user_email: values.email,
       user_phone_number: values.phone_number,
       quantity: values.quantity ?? 1,
+      payment_method: values.payment_method ?? "gopay",
     };
 
     await onConfirm(transactionRequest);
@@ -246,47 +248,47 @@ export default function BookingModal({
               }}
             />
 
-            {/* <FormField
-                control={form.control}
-                name="payment_method"
-                render={({ field }) => {
-                  const hasError = !!form.formState.errors.payment_method;
-                  return (
-                    <FormItem className="relative">
-                      <FormLabel
-                        className={`text-white absolute left-3 top-1 text-xs ${
-                          hasError ? "text-danger-40" : "text-white"
-                        }`}
+            <FormField
+              control={form.control}
+              name="payment_method"
+              render={({ field }) => {
+                const hasError = !!form.formState.errors.payment_method;
+                return (
+                  <FormItem className="relative">
+                    <FormLabel
+                      className={`text-white absolute left-3 top-1 text-xs ${
+                        hasError ? "text-danger-40" : "text-white"
+                      }`}
+                    >
+                      Payment Method
+                    </FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
                       >
-                        Payment Method
-                      </FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
+                        <SelectTrigger
+                          className={`pt-6 h-12 ${
+                            hasError
+                              ? "border-danger-40 bg-transparent"
+                              : "bg-transparent border border-secondary-60"
+                          }`}
                         >
-                          <SelectTrigger
-                            className={`pt-6 h-12 ${
-                              hasError
-                                ? "border-danger-40 bg-transparent"
-                                : "bg-transparent border border-secondary-60"
-                            }`}
-                          >
-                            <SelectValue placeholder="Select payment method" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="gopay">GoPay</SelectItem>
-                            <SelectItem value="mandiri_bank_transfer">
-                              Mandiri
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage className="absolute right-3 top-0.5 text-danger-40 text-xs" />
-                    </FormItem>
-                  );
-                }}
-              /> */}
+                          <SelectValue placeholder="Select payment method" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="gopay">GoPay</SelectItem>
+                          <SelectItem value="mandiri_bank_transfer">
+                            Mandiri
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage className="absolute right-3 top-0.5 text-danger-40 text-xs" />
+                  </FormItem>
+                );
+              }}
+            />
             {isClass ? (
               <FormField
                 control={form.control}
