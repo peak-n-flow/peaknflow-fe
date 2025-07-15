@@ -1,4 +1,4 @@
-import { SERVICE_GYM_ID, SERVICE_RECOVERY_ID, SERVICE_YOGA_ID } from "./env";
+import { SERVICE_GYM_ID, SERVICE_PILATES_ID, SERVICE_RECOVERY_ID, SERVICE_YOGA_ID } from "./env";
 
 export function getId(serviceType: string) {
   let id;
@@ -8,6 +8,8 @@ export function getId(serviceType: string) {
     id = SERVICE_YOGA_ID;
   } else if (serviceType == "recovery") {
     id = SERVICE_RECOVERY_ID;
+  } else if (serviceType == "pilates") {
+    id = SERVICE_PILATES_ID;
   } else {
     id = "";
   }

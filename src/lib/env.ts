@@ -5,6 +5,7 @@ export const NEXTAUTH_URL = process.env.NEXTAUTH_URL
 export const GYM_ID = process.env.NEXT_PUBLIC_GYM_ID
 export const SERVICE_GYM_ID = process.env.NEXT_PUBLIC_SERVICE_GYM_ID
 export const SERVICE_YOGA_ID = process.env.NEXT_PUBLIC_SERVICE_YOGA_ID
+export const SERVICE_PILATES_ID = process.env.NEXT_PUBLIC_SERVICE_PILATES_ID
 export const SERVICE_RECOVERY_ID = process.env.NEXT_PUBLIC_SERVICE_RECOVERY_ID
 export const MIDTRANS_CLIENT_KEY = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY
 export const MIDTRANS_APP_URL = process.env.NEXT_PUBLIC_MIDTRANS_APP_URL

@@ -141,6 +141,17 @@ const Navbar = () => {
                     >
                       Yoga
                     </Link>
+                     <Link
+                      href="/service/pilates"
+                      className={cn(
+                        "block py-4 px-8 border-b border-primary-80",
+                        pathname === "/service/pilates"
+                          ? "bg-primary-20 text-black"
+                          : "text-light-20 hover:bg-secondary-60"
+                      )}
+                    >
+                      Pilates
+                    </Link>
                     <Link
                       href="/service/wellness-bar"
                       className={cn(
@@ -234,6 +245,15 @@ const Navbar = () => {
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         Yoga
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/service/pilates"
+                        className="block text-light-20 hover:text-primary-40"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Pilates
                       </Link>
                     </li>
                     <li>
