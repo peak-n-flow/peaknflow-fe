@@ -27,12 +27,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { formatJakartaTime, localToUTC } from "@/lib/date";
+import { formatToLocalISO } from "@/lib/date";
 import { getId } from "@/lib/get-id";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { TransactionRequest } from "../types";
+import type { TransactionRequest } from "../types";
 
 const bookingFormSchema = z.object({
   name: z
@@ -40,13 +40,12 @@ const bookingFormSchema = z.object({
     .min(2, { message: "Name must be at least 2 characters." })
     .max(50, { message: "Name must not exceed 50 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
-  phone_number: z
-    .string()
-    .min(10, { message: "Phone number must be at least 10 digits." }),
-  hour: z.number().min(1, { message: "Hour must be at least 1." }),
-  payment_method: z
-    .string()
-    .nonempty({ message: "Please select a payment method." }),
+  phone_number: z.string().regex(/^\+\d{10,15}$/, {
+    message: "Must format (e.g., +62XXXXXXXXXX).",
+  }),
+  hour: z.number().min(1, { message: "Hour must be at least 1." }).optional(),
+  quantity: z.number().min(1, { message: "Quantity must be at least 1." }),
+  payment_method: z.string().min(1, { message: "Payment method is required." }),
 });
 
 type BookingFormValues = z.infer<typeof bookingFormSchema>;
@@ -59,6 +58,9 @@ interface BookingDialogProps {
   onConfirm: (transaction: TransactionRequest) => void;
   serviceType: string;
   maxBookHour: number;
+  durationInHour: number;
+  maxBookQuantity?: number;
+  isClass?: boolean;
 }
 
 export default function BookingModal({
@@ -69,6 +71,9 @@ export default function BookingModal({
   user,
   serviceType,
   maxBookHour,
+  durationInHour,
+  maxBookQuantity,
+  isClass = false,
 }: BookingDialogProps) {
   const form = useForm<BookingFormValues>({
     resolver: zodResolver(bookingFormSchema),
@@ -76,8 +81,8 @@ export default function BookingModal({
       name: user?.name ?? "",
       email: user?.email ?? "",
       phone_number: user?.phone_number ?? "",
-      hour: 1,
-      payment_method: "",
+      hour: isClass ? undefined : durationInHour ?? 1,
+      quantity: 1,
     },
   });
 
@@ -87,29 +92,39 @@ export default function BookingModal({
         name: user.name ?? "",
         email: user.email ?? "",
         phone_number: user.phone_number ?? "",
-        hour: 1,
-        payment_method: "",
+        hour: durationInHour ?? 1,
+        quantity: 1,
       });
     }
   }, [user, form]);
 
+  useEffect(() => {
+    const subscription = form.watch((_, { name }) => {
+      if (name) {
+        console.log("Form errors:", form.formState.errors);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form]);
+
   if (!selectedSlot) return null;
 
-  const formattedDate = formatJakartaTime(selectedSlot, "EEEE, MMMM d, yyyy");
-  const formattedTime = formatJakartaTime(selectedSlot, "h:mm a");
-  const date = new Date(selectedSlot);
-
   const onSubmit = async (values: BookingFormValues) => {
+    const startDate = new Date(selectedSlot);
+    const endDate = new Date(startDate);
+    const hoursBooking = isClass ? durationInHour : values.hour ?? 1;
+    endDate.setHours(endDate.getHours() + hoursBooking);
+
     const transactionRequest: TransactionRequest = {
       service_id: getId(serviceType) ?? "",
-      start_at: new Date(selectedSlot).toISOString().replace(/\.\d{3}Z$/, "Z"),
-      end_at: localToUTC(
-        new Date(date.getTime() + values.hour * 60 * 60 * 1000)
-      ),
-      payment_method: values.payment_method,
+      start_at: formatToLocalISO(startDate),
+      end_at: formatToLocalISO(endDate),
       user_name: values.name,
       user_email: values.email,
       user_phone_number: values.phone_number,
+      quantity: values.quantity ?? 1,
+      payment_method: values.payment_method ?? "gopay",
     };
 
     await onConfirm(transactionRequest);
@@ -148,6 +163,7 @@ export default function BookingModal({
                     </FormLabel>
                     <FormControl>
                       <Input
+                        autoComplete="off"
                         placeholder="Enter your name"
                         {...field}
                         className={`pt-6 text-light-60 autofill-dark ${
@@ -181,6 +197,7 @@ export default function BookingModal({
                     </FormLabel>
                     <FormControl>
                       <Input
+                        autoComplete="off"
                         type="email"
                         placeholder="Enter your email"
                         {...field}
@@ -203,7 +220,7 @@ export default function BookingModal({
               render={({ field }) => {
                 const hasError = !!form.formState.errors.phone_number;
                 return (
-                  <FormItem className="relative pb-2">
+                  <FormItem className="relative">
                     <FormLabel
                       className={`absolute left-3 top-1 text-xs autofill-dark [&:has(+_input:-webkit-autofill)]:text-white ${
                         hasError
@@ -215,6 +232,7 @@ export default function BookingModal({
                     </FormLabel>
                     <FormControl>
                       <Input
+                        autoComplete="off"
                         placeholder="+62XXXXXXXXXX"
                         {...field}
                         className={`pt-6 text-light-60 autofill-dark ${
@@ -236,7 +254,7 @@ export default function BookingModal({
               render={({ field }) => {
                 const hasError = !!form.formState.errors.payment_method;
                 return (
-                  <FormItem className="relative pb-2">
+                  <FormItem className="relative">
                     <FormLabel
                       className={`text-white absolute left-3 top-1 text-xs ${
                         hasError ? "text-danger-40" : "text-white"
@@ -271,48 +289,108 @@ export default function BookingModal({
                 );
               }}
             />
-            <FormField
-              control={form.control}
-              name="hour"
-              render={({ field }) => {
-                const hasError = !!form.formState.errors.hour;
-                return (
-                  <FormItem className="relative pb-2">
-                    <FormLabel
-                      className={`text-white absolute left-3 top-1 text-xs h-12 ${
-                        hasError ? "text-danger-40" : "text-white"
-                      }`}
-                    >
-                      Booking Hours (Max {maxBookHour} hours)
-                    </FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={(value) => field.onChange(Number(value))}
-                        value={field.value.toString()}
+            {isClass ? (
+              <FormField
+                control={form.control}
+                name="quantity"
+                render={({ field }) => {
+                  const hasError = !!form.formState.errors.quantity;
+                  return (
+                    <FormItem className="relative">
+                      <FormLabel
+                        className={`text-white absolute left-3 top-1 text-xs h-12 ${
+                          hasError ? "text-danger-40" : "text-white"
+                        }`}
                       >
-                        <SelectTrigger
-                          className={`pt-6 ${
-                            hasError
-                              ? "border-danger-40 bg-transparent"
-                              : "bg-transparent border border-secondary-60"
-                          }`}
+                        Quantity (Max {maxBookQuantity} people)
+                      </FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={(value) =>
+                            field.onChange(Number(value))
+                          }
+                          value={(field.value ?? "").toString()}
                         >
-                          <SelectValue placeholder="Select booking hours" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Array.from({ length: maxBookHour }, (_, i) => (
-                            <SelectItem key={i + 1} value={(i + 1).toString()}>
-                              {i + 1} hour{i + 1 > 1 ? "s" : ""}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage className="absolute right-3 top-0.5 text-danger-40 text-xs" />
-                  </FormItem>
-                );
-              }}
-            />
+                          <SelectTrigger
+                            className={`pt-6 h-12 ${
+                              hasError
+                                ? "border-danger-40 bg-transparent"
+                                : "bg-transparent border border-secondary-60"
+                            }`}
+                          >
+                            <SelectValue placeholder="Select booking hours" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.from(
+                              { length: maxBookQuantity ?? 0 },
+                              (_, i) => (
+                                <SelectItem
+                                  key={i + 1}
+                                  value={(i + 1).toString()}
+                                >
+                                  {i + 1} people{i + 1 > 1 ? "s" : ""}
+                                </SelectItem>
+                              )
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage className="absolute right-3 top-0.5 text-danger-40 text-xs" />
+                    </FormItem>
+                  );
+                }}
+              />
+            ) : (
+              <FormField
+                control={form.control}
+                name="hour"
+                render={({ field }) => {
+                  const hasError = !!form.formState.errors.hour;
+                  return (
+                    <FormItem className="relative">
+                      <FormLabel
+                        className={`text-white absolute left-3 top-1 text-xs h-12 ${
+                          hasError ? "text-danger-40" : "text-white"
+                        }`}
+                      >
+                        Booking Hours (Max {maxBookHour} hours)
+                      </FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={(value) =>
+                            field.onChange(Number(value))
+                          }
+                          value={(field.value ?? "").toString()}
+                        >
+                          <SelectTrigger
+                            className={`pt-6 h-12 ${
+                              hasError
+                                ? "border-danger-40 bg-transparent"
+                                : "bg-transparent border border-secondary-60"
+                            }`}
+                          >
+                            <SelectValue placeholder="Select booking hours" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.from({ length: maxBookHour }, (_, i) => (
+                              <SelectItem
+                                key={i + 1}
+                                value={(i + 1).toString()}
+                              >
+                                {i + 1 * durationInHour} hour
+                                {i + 1 > 1 ? "s" : ""}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage className="absolute right-3 top-0.5 text-danger-40 text-xs" />
+                    </FormItem>
+                  );
+                }}
+              />
+            )}
+
             <Button type="submit" className="w-full">
               Reservasi Sekarang
             </Button>

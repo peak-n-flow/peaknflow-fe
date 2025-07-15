@@ -95,13 +95,11 @@ export default function ServiceOffer({
         )
 
         .to(card, {
-          boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
           scale: 1.03,
           duration: 0.4,
           ease: "power1.inOut",
         })
         .to(card, {
-          boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
           scale: 1,
           duration: 0.4,
           ease: "power1.inOut",
@@ -118,7 +116,6 @@ export default function ServiceOffer({
         gsap.to(card, {
           y: -15,
           scale: 1.05,
-          boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
           backgroundColor: "rgba(var(--card-rgb, 255, 255, 255), 0.05)",
           borderColor: "rgba(var(--card-border-rgb, 200, 200, 200), 0.3)",
           duration: 0.3,
@@ -143,9 +140,7 @@ export default function ServiceOffer({
         gsap.to(card, {
           y: 0,
           scale: 1,
-          boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
           backgroundColor: "transparent",
-          borderColor: "transparent",
           duration: 0.3,
           ease: "power2.out",
         });
@@ -176,7 +171,10 @@ export default function ServiceOffer({
   }, [subservices, pathname]);
 
   return (
-    <section ref={sectionRef} className="container py-10 flex flex-col gap-10 md:gap-20">
+    <section
+      ref={sectionRef}
+      className="container py-10 flex flex-col gap-10 md:gap-20"
+    >
       <h2 className="text-body-lg md:text-h6 text-white">What We Offer</h2>
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-10 2xl:gap-20 justify-center items-start text-start">
         {subservices.map((subservice, index) => (
@@ -185,7 +183,7 @@ export default function ServiceOffer({
             ref={(el) => {
               cardsRef.current[index] = el;
             }}
-            className="flex flex-col gap-4 text-h4 md:text-h1 p-8 rounded-xl transition-all duration-300 border border-transparent"
+            className="flex flex-col gap-4 text-h4 md:text-h1 p-8 rounded-xl transition-all duration-300 "
           >
             <h2
               ref={(el) => {

@@ -23,6 +23,21 @@ interface Service {
   price: string;
   duration_in_minutes: number;
   created_at: string;
+  slot: number;
+}
+
+interface Event {
+  id: string;
+  name: string;
+  price: string;
+  is_event: boolean;
+  slot: number;
+  start_time: string;
+  end_time: string;
+  start_date: string;
+  end_date: string;
+  service_id: string;
+  created_at: string;
 }
 
 interface ErrorAPI {
@@ -40,4 +55,30 @@ interface Meta {
   total_page: number;
   page: number;
   limit: number;
+}
+
+interface Transaction {
+  id: string;
+  code: string;
+  user_name: string;
+  user_email: string;
+  user_phone_number: string;
+  gym_name: string;
+  service_name: string;
+  service_price: string;
+  service_start_at: string;
+  service_end_at: string;
+  raw_price: string;
+  final_price: string;
+  payment_method: string;
+  payment_status: string;
+  created_at: string;
+  updated_at: string;
+  voucher_code: string;
+}
+
+interface Window {
+  snap: {
+    pay: (token: string, options: any) => void;
+  };
 }

@@ -1,4 +1,4 @@
-import React from "react";
+"use client";
 import {
   Table,
   TableBody,
@@ -7,21 +7,29 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { format } from "date-fns";
-import { Booking } from "../types";
-import { getTimeSlotWithStatus } from "@/lib/time-slot";
+import {
+  getTimeSlotWithStatus,
+  isEventActiveForTimeSlot,
+} from "@/lib/time-slot";
+import { calculateAvailableSlots } from "@/lib/time-slot";
+import { addDays, differenceInDays, format, isWithinInterval } from "date-fns";
+import type { Booking } from "../types";
 import GymStatusLabel from "./gym-status-label";
 
 export default function Calendar({
+  service,
   dateRange,
   timeSlots,
   bookings,
+  serviceEvents,
   onSelectTimeSlot,
 }: {
+  service: Service;
   dateRange: Date[];
   timeSlots: string[];
   bookings: { [key: string]: Booking[] };
-  onSelectTimeSlot: (date: Date, time: string) => void;
+  serviceEvents: Event[];
+  onSelectTimeSlot: (date: Date, time: string, availableSlots: number) => void;
 }) {
   return (
     <div className="overflow-auto">
@@ -40,51 +48,90 @@ export default function Calendar({
         </TableHeader>
         <TableBody>
           {timeSlots.map((time) => (
-            <TableRow key={time} className="border-secondary-60 bg-transparent">
+            <TableRow className="border-secondary-60 bg-transparent" key={time}>
               {dateRange.map((date, dateIndex) => {
                 const dateStr = format(date, "yyyy-MM-dd");
                 const booking = getTimeSlotWithStatus(dateStr, time, bookings);
 
-                const isSlotSelectable = !booking;
+                // Find events active for this date and time slot
+                const activeEvents = serviceEvents.filter((event) =>
+                  isEventActiveForTimeSlot(event, date, time)
+                );
+
+                // If multiple events, choose the one with the shortest date range
+                const selectedEvent =
+                  activeEvents.length > 1
+                    ? activeEvents.reduce((shortest, current) => {
+                        const shortestDuration = differenceInDays(
+                          new Date(shortest.end_date),
+                          new Date(shortest.start_date)
+                        );
+                        const currentDuration = differenceInDays(
+                          new Date(current.end_date),
+                          new Date(current.start_date)
+                        );
+                        return currentDuration < shortestDuration
+                          ? current
+                          : shortest;
+                      })
+                    : activeEvents[0];
+
+                // Calculate available slots
+                const availableSlots = calculateAvailableSlots(
+                  date.toISOString(),
+                  time,
+                  service,
+                  bookings,
+                  serviceEvents
+                );
+
+                // Modified: isSlotSelectable is true when there are available slots
+                // regardless of whether there are some bookings
+                const isSlotSelectable = availableSlots > 0;
+
+                // Determine if the slot is fully booked
+                const isFullyBooked = availableSlots === 0;
 
                 return (
                   <TableCell
                     key={dateIndex}
                     onClick={() =>
-                      isSlotSelectable && onSelectTimeSlot(date, time)
+                      isSlotSelectable &&
+                      onSelectTimeSlot(date, time, availableSlots)
                     }
                     className={`
-                          border border-secondary-60 
-                          p-6 h-20 md:h-36 md:text-h1 text-center md:text-start relative 
-                          ${
-                            !booking
-                              ? "cursor-pointer hover:bg-primary-80"
-                              : booking.status === "closed"
-                              ? "cursor-not-allowed bg-secondary-100"
-                              : "bg-primary-100 cursor-not-allowed"
-                          }
-                        `}
+                      border border-secondary-60 
+                      p-6 h-20 md:h-36 md:text-h1 text-center md:text-start relative w-[calc(100%/7)]  
+                      ${
+                        isSlotSelectable
+                          ? "cursor-pointer hover:bg-primary-80"
+                          : booking?.status === "closed"
+                          ? "cursor-not-allowed bg-secondary-100"
+                          : isFullyBooked
+                          ? "bg-primary-100 cursor-not-allowed"
+                          : "cursor-not-allowed"
+                      }
+                    `}
                   >
                     {time}
-                    {booking && (
-                      // <div className="text-xs text-white mt-2">
-                      //   <div>
-                      //     •{" "}
-                      //     {booking.status === "closed"
-                      //       ? "Closed"
-                      //       : "Booked"}
-                      //   </div>
-                      //   <div className="mt-1 text-gray-400">
-                      //     {new Date(booking.start_at)
-                      //       .toUTCString()
-                      //       .slice(17, 22)}{" "}
-                      //     -
-                      //     {new Date(booking.end_at)
-                      //       .toUTCString()
-                      //       .slice(17, 22)}
-                      //   </div>
-                      // </div>
-                      <GymStatusLabel status={booking.status} />
+                    {/* Only show GymStatusLabel when fully booked */}
+                    {isFullyBooked && <GymStatusLabel status="booked" />}
+                    {selectedEvent ? (
+                      <div className="flex flex-col">
+                        <p className="text-white text-sm">
+                          {selectedEvent.name} - Rp. {selectedEvent.price}
+                        </p>
+                        <p className="text-white text-sm">
+                          {selectedEvent.slot > 1 &&
+                            `(${availableSlots}/${selectedEvent.slot} available)`}
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-white text-sm">
+                        Rp. {service.price}{" "}
+                        {service.slot > 1 &&
+                          `(${availableSlots}/${service.slot} available)`}
+                      </p>
                     )}
                   </TableCell>
                 );

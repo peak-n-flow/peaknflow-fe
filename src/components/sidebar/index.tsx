@@ -11,6 +11,7 @@ import {
   LogOut,
   Menu,
   User as UserIcon,
+  BoxIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -46,15 +47,20 @@ const navSections: NavSection[] = [
         href: "/admin/schedule",
       },
       {
+        title: "Service",
+        icon: BoxIcon,
+        href: "/admin/service",
+      },
+      {
         title: "Transaction",
         icon: FileText,
         href: "/admin/transaction",
       },
-      {
-        title: "Voucher",
-        icon: Gift,
-        href: "/admin/voucher",
-      },
+      // {
+      //   title: "Voucher",
+      //   icon: Gift,
+      //   href: "/admin/voucher",
+      // },
     ],
   },
   {
@@ -171,13 +177,15 @@ export function Sidebar({ user }: { user: User }) {
                 <span className="text-xs text-gray-400">{user.email}</span>
               </div>
             </div>
-            <Button
-              size={isMobile ? "sm" : "lg"}
-              variant="secondary"
-              className="w-full flex items-center justify-center rounded-2xl py-4"
-            >
-              <LogOut className="h-4 w-4 mr-2 rotate-180" />
-            </Button>
+            <Link href={"/auth/logout"}>
+              <Button
+                size={isMobile ? "sm" : "lg"}
+                variant="secondary"
+                className="w-full flex items-center justify-center rounded-2xl py-4"
+              >
+                <LogOut className="h-4 w-4 mr-2 rotate-180" />
+              </Button>
+            </Link>
           </div>
         </div>
       </aside>

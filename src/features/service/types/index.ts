@@ -7,6 +7,7 @@ export interface BookingListResponse {
   gym: Gym;
   service: Service;
   service_bookings: ServiceBookings;
+  service_events: Event[];
 }
 
 export type ServiceBookings = Record<string, Booking[]>;
@@ -26,6 +27,7 @@ export interface TransactionRequest {
   user_name: string;
   user_email: string;
   user_phone_number: string;
+  quantity: number;
 }
 
 export interface Payment {

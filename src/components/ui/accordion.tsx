@@ -1,7 +1,7 @@
 "use client";
 
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { Plus } from "lucide-react";
+import { Plus, Minus } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -19,21 +19,37 @@ AccordionItem.displayName = "AccordionItem";
 const AccordionTrigger = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
-  <AccordionPrimitive.Header className="flex">
-    <AccordionPrimitive.Trigger
-      ref={ref}
-      className={cn(
-        "w-full flex flex-1 items-center justify-between py-4 font-medium transition-all [&[data-state=open]>svg]:rotate-180",
-        className
-      )}
-      {...props}
-    >
-      {children}
-      <Plus className="h-6 w-6 md:h-14 md:w-14 text-secondary-60 shrink-0 transition-transform duration-200" />
-    </AccordionPrimitive.Trigger>
-  </AccordionPrimitive.Header>
-));
+>(({ className, children, ...props }, ref) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  return (
+    <AccordionPrimitive.Header className="flex">
+      <AccordionPrimitive.Trigger
+        ref={ref}
+        className={cn(
+          "w-full flex flex-1 items-center justify-between py-4 font-medium transition-all",
+          className
+        )}
+        onClick={() => setIsOpen(!isOpen)}
+        {...props}
+      >
+        {children}
+        <div
+          className={cn(
+            "transition-transform duration-300",
+            isOpen ? "rotate-180" : "rotate-0"
+          )}
+        >
+          {isOpen ? (
+            <Minus className="h-5 md:h-7 w-5 md:w-7  text-secondary-60 shrink-0" />
+          ) : (
+            <Plus className="h-5 md:h-7 w-5 md:w-7  text-secondary-60 shrink-0" />
+          )}
+        </div>
+      </AccordionPrimitive.Trigger>
+    </AccordionPrimitive.Header>
+  );
+});
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
 
 const AccordionContent = React.forwardRef<
@@ -52,4 +68,3 @@ const AccordionContent = React.forwardRef<
 AccordionContent.displayName = AccordionPrimitive.Content.displayName;
 
 export { Accordion, AccordionContent, AccordionItem, AccordionTrigger };
-

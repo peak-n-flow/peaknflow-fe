@@ -88,13 +88,13 @@ const Navbar = () => {
             <div className="hidden md:flex space-x-12 items-center">
               <Link
                 href="/"
-                className="text-base font-light hover:text-primary-40 text-white"
+                className="text-base font-medium hover:text-primary-40 text-white"
               >
                 Home
               </Link>
               <div className="relative">
                 <button
-                  className="flex items-center text-base font-light hover:text-primary-40 text-white"
+                  className="flex items-center text-base font-medium hover:text-primary-40 text-white"
                   onClick={() =>
                     setIsServiceDropdownOpen(!isServiceDropdownOpen)
                   }
@@ -107,11 +107,11 @@ const Navbar = () => {
                   )}
                 </button>
                 {isServiceDropdownOpen && (
-                  <div className="border-primary-60 border absolute mt-2 w-48 bg-secondary-80 font-medium shadow-lg rounded-md overflow-hidden left-1/2 transform -translate-x-1/2">
+                  <div className="absolute mt-[34px] w-48 bg-secondary-80 font-medium shadow-lg rounded-md overflow-hidden left-1/2 transform -translate-x-1/2">
                     <Link
                       href="/service/gym"
                       className={cn(
-                        "block py-4 px-8",
+                        "block py-4 px-8 border-b border-primary-80",
                         pathname === "/service/gym"
                           ? "bg-primary-20 text-black"
                           : "text-light-20 hover:bg-secondary-60 "
@@ -122,7 +122,7 @@ const Navbar = () => {
                     <Link
                       href="/service/recovery"
                       className={cn(
-                        "block py-4 px-8",
+                        "block py-4 px-8 border-b border-primary-80",
                         pathname === "/service/recovery"
                           ? "bg-primary-20 text-dark-100"
                           : "text-light-20 hover:bg-secondary-60"
@@ -133,13 +133,24 @@ const Navbar = () => {
                     <Link
                       href="/service/yoga"
                       className={cn(
-                        "block py-4 px-8",
+                        "block py-4 px-8 border-b border-primary-80",
                         pathname === "/service/yoga"
                           ? "bg-primary-20 text-black"
                           : "text-light-20 hover:bg-secondary-60"
                       )}
                     >
                       Yoga
+                    </Link>
+                     <Link
+                      href="/service/pilates"
+                      className={cn(
+                        "block py-4 px-8 border-b border-primary-80",
+                        pathname === "/service/pilates"
+                          ? "bg-primary-20 text-black"
+                          : "text-light-20 hover:bg-secondary-60"
+                      )}
+                    >
+                      Pilates
                     </Link>
                     <Link
                       href="/service/wellness-bar"
@@ -157,7 +168,7 @@ const Navbar = () => {
               </div>
               <Link
                 href="/contact"
-                className="text-base font-light hover:text-primary-40 text-white"
+                className="text-base font-medium hover:text-primary-40 text-white"
               >
                 Contact
               </Link>
@@ -234,6 +245,15 @@ const Navbar = () => {
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         Yoga
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/service/pilates"
+                        className="block text-light-20 hover:text-primary-40"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Pilates
                       </Link>
                     </li>
                     <li>

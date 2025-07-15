@@ -1,8 +1,8 @@
 import React from "react";
-import StatsCard from "../components/stats-card";
 import CalendarIcon from "@/assets/icons/calendar.svg";
 import RevenueIcon from "@/assets/icons/revenue.svg";
 import UserIcon from "@/assets/icons/user.svg";
+import StatsCard from "../../components/stats-card";
 
 export default function StatsOverview({
   users,
@@ -14,21 +14,21 @@ export default function StatsOverview({
   income: number;
 }) {
   return (
-    <div className="col-span-1 grid grid-cols-1 gap-3">
+    <div className="col-span-1 grid gap-8 grid-cols-1 lg:grid-cols-3 xl:grid-cols-1 xl:gap-3">
       <StatsCard
-        icon={CalendarIcon}
+        icon={<CalendarIcon />}
         title="Reservasi Hari ini"
         count={reservations}
         stats="jam"
       />
       <StatsCard
-        icon={UserIcon}
+        icon={<UserIcon />}
         title="Total User"
         count={users}
         stats="User"
       />
       <StatsCard
-        icon={RevenueIcon}
+        icon={<RevenueIcon />}
         title="Total Pendapatan"
         count={income}
         stats="Rupiah"
