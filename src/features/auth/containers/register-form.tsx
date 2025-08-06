@@ -31,7 +31,9 @@ const registerFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
   phone_number: z
     .string()
-    .min(10, { message: "Phone number must be at least 10 digits." }),
+    .regex(/^\+[1-9]\d{7,14}$/, {
+      message: "Please enter a valid international phone number.",
+    }),
   password: z
     .string()
     .min(8, { message: "Password must be at least 6 characters." }),
@@ -88,9 +90,8 @@ export default function RegisterPage() {
               return (
                 <FormItem className="relative">
                   <FormLabel
-                    className={`absolute left-3 top-1 text-xs ${
-                      hasError ? "text-danger-80" : "text-[#5C5A5A]"
-                    }`}
+                    className={`absolute left-3 top-1 text-xs ${hasError ? "text-danger-80" : "text-[#5C5A5A]"
+                      }`}
                   >
                     Name
                   </FormLabel>
@@ -115,9 +116,8 @@ export default function RegisterPage() {
               return (
                 <FormItem className="relative">
                   <FormLabel
-                    className={`absolute left-3 top-1 text-xs ${
-                      hasError ? "text-danger-80" : "text-[#5C5A5A]"
-                    }`}
+                    className={`absolute left-3 top-1 text-xs ${hasError ? "text-danger-80" : "text-[#5C5A5A]"
+                      }`}
                   >
                     Email
                   </FormLabel>
@@ -140,19 +140,31 @@ export default function RegisterPage() {
             name="phone_number"
             render={({ field }) => {
               const hasError = !!form.formState.errors.phone_number;
+
+              const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                let value = e.target.value;
+
+                if (value.startsWith("0")) {
+                  value = "+62" + value.slice(1);
+                }
+
+                form.setValue("phone_number", value);
+              };
+
               return (
                 <FormItem className="relative">
                   <FormLabel
-                    className={`absolute left-3 top-1 text-xs ${
-                      hasError ? "text-danger-80" : "text-[#5C5A5A]"
-                    }`}
+                    className={`absolute left-3 top-1 text-xs ${hasError ? "text-danger-80" : "text-[#5C5A5A]"
+                      }`}
                   >
                     Phone Number
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="+62XXXXXXXXXX"
+                      placeholder="+6281234567890"
                       {...field}
+                      onChange={handlePhoneChange}
+                      value={field.value}
                       className={`pt-6 ${hasError ? "border-danger-80 " : ""}`}
                     />
                   </FormControl>
@@ -162,6 +174,7 @@ export default function RegisterPage() {
             }}
           />
 
+
           <FormField
             control={form.control}
             name="password"
@@ -170,9 +183,8 @@ export default function RegisterPage() {
               return (
                 <FormItem className="relative">
                   <FormLabel
-                    className={`absolute left-3 top-1 text-xs ${
-                      hasError ? "text-danger-80" : "text-[#5C5A5A]"
-                    }`}
+                    className={`absolute left-3 top-1 text-xs ${hasError ? "text-danger-80" : "text-[#5C5A5A]"
+                      }`}
                   >
                     Password
                   </FormLabel>
