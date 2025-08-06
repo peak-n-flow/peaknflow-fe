@@ -122,7 +122,7 @@ export default function TransactionDashboardContainer({
                     </TableCell>
                     <TableCell className="text-center">
                       <Link
-                        href={`/admin/transaction/${transaction.id}`}
+                        href={`/admin/transaction/${transaction.code}`}
                         className="flex justify-center items-center"
                       >
                         <DetailIcon />
