@@ -28,6 +28,23 @@ export default function TransactionContainer({
     script.setAttribute("data-client-key", `SB-${MIDTRANS_CLIENT_KEY}`);
     script.onload = () => {
       setIsLoading(false);
+
+      if (window.snap && snapToken) {
+        window.snap.pay(snapToken, {
+          onSuccess: (result: any) => {
+            toast.success("Payment successful");
+          },
+          onPending: (result: any) => {
+            toast.success("Payment pending");
+          },
+          onError: (result: any) => {
+            toast.error("Payment failed");
+          },
+          onClose: () => {
+            console.log("Customer closed the payment popup without completing payment");
+          },
+        });
+      }
     };
     script.onerror = () => {
       setError("Failed to load payment gateway");
@@ -36,33 +53,9 @@ export default function TransactionContainer({
     document.body.appendChild(script);
 
     return () => {
-      // Clean up
       document.body.removeChild(script);
     };
-  }, []);
-
-  const handlePayNow = () => {
-    if (window.snap && snapToken) {
-      window.snap.pay(snapToken, {
-        onSuccess: (result: any) => {
-          toast.success("Payment successful");
-        },
-        onPending: (result: any) => {
-          toast.success("Payment pending");
-        },
-        onError: (result: any) => {
-          toast.error("Payment failed");
-        },
-        onClose: () => {
-          console.log(
-            "Customer closed the payment popup without completing payment"
-          );
-        },
-      });
-    } else {
-      setError("Payment gateway not available");
-    }
-  };
+  }, [snapToken]);
 
   return (
     <main className="flex min-h-screen items-center justify-center p-4">
@@ -88,8 +81,8 @@ export default function TransactionContainer({
         </CardContent>
         <CardFooter>
           <Button
-            onClick={handlePayNow}
-            disabled={isLoading || !snapToken || !!error}
+            onClick={() => { }}
+            disabled={true}
             className="w-full"
           >
             {isLoading ? (
@@ -98,7 +91,7 @@ export default function TransactionContainer({
                 Loading payment gateway...
               </>
             ) : (
-              "Pay Now"
+              "Payment window opened"
             )}
           </Button>
         </CardFooter>
