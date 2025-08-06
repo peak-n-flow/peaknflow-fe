@@ -74,9 +74,30 @@ const getTransactionByCode = async (code: string) => {
   }
 };
 
+const createAdminTransaction = async (request: TransactionRequest) => {
+  try {
+    const response = await fetch(`/api/services/transactions/admins`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+    });
+    const data = await response.json();
+    if (data.status !== 201) {
+      throw new Error(data.message);
+    }
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
 export {
   getSchedule,
   createTransaction,
   getAvailableTimeSlots,
   getTransactionByCode,
+  createAdminTransaction
 };

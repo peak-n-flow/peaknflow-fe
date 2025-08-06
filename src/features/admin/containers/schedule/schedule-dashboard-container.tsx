@@ -15,10 +15,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import useSession from "@/features/auth/hooks/use-session";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SERVICE_GYM_ID, SERVICE_PILATES_ID, SERVICE_RECOVERY_ID, SERVICE_YOGA_ID } from "@/lib/env";
+import useCreateAdminTransaction from "@/features/service/hooks/use-create-admin-transaction";
 
 export default function ScheduleDashboardContainer() {
   const router = useRouter();
-  const { data: schedules, refetch } = useSchedule({ serviceType: "yoga" });
 
   const [startDate, setStartDate] = useState(() =>
     startOfWeek(new Date(), { weekStartsOn: 3 })
@@ -35,12 +37,17 @@ export default function ScheduleDashboardContainer() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [type, setType] = useState("gym");
   const { status } = UseNextAuthSession();
-  const createTransaction = useCreateTransaction();
+  const createTransaction = useCreateAdminTransaction();
   const queryClient = useQueryClient();
+
+  const { data: schedules, refetch } = useSchedule({ serviceType: type });
+
   useEffect(() => {
     if (schedules?.gym) {
       const slots = generateTimeSlots(schedules.gym, schedules.service);
       setTimeSlots(slots);
+      setDurationInHour(schedules.service?.duration_in_minutes / 60);
+
     }
   }, [schedules?.gym]);
 
@@ -71,21 +78,16 @@ export default function ScheduleDashboardContainer() {
     setIsDialogOpen(false);
     setSelectedSlot(null);
   };
+
   const handleConfirmBooking = (request: TransactionRequest) => {
     if (!selectedSlot) return;
-
+    console.log(request);
     createTransaction.mutate(request, {
       onSuccess: (data) => {
         setIsDialogOpen(false);
         setSelectedSlot(null);
         console.log(data);
-        toast.success("Booking successful");
-
-        // Open new tab with redirect_url if available
-        if (data.data.redirect_url) {
-          // window.open(data.data.redirect_url, "_blank");
-          router.push(`/transaction/snap?snapToken=${data.data.snap_token}`);
-        }
+        toast.success("Booking successful")
 
         queryClient.invalidateQueries({ queryKey: "schedule" });
         refetch();
@@ -100,10 +102,26 @@ export default function ScheduleDashboardContainer() {
   };
   const { data, isLoading } = useSession();
 
+  useEffect(() => {
+    refetch();
+  }, [type])
+
   return (
     <main className="flex flex-col gap-5 overflow-x-auto">
-      <h2 className="text-h5">Schedule</h2>
-
+      <div className="flex w-full flex-col md:flex-row gap-8 justify-between items-center h-8 py-9">
+        <h2 className="text-h5">Schedule</h2>
+        <Select value={type} onValueChange={setType}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select service" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="gym">Gym</SelectItem>
+            <SelectItem value="yoga">Yoga</SelectItem>
+            <SelectItem value="pilates">Pilates</SelectItem>
+            <SelectItem value="recovery">Recovery</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
       <div className="bg-white rounded-2xl flex flex-col gap-4 p-6 ">
         <div className="flex items-center gap-4">
           <div className="flex gap-2.5 items-center">
