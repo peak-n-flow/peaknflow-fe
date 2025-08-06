@@ -113,7 +113,7 @@ export function Sidebar({ user }: { user: User }) {
       {/* Sidebar */}
       <aside
         className={cn(
-          "py-12 fixed inset-y-0 left-0 z-50 flex xl:w-[30vh] 2xl:w-[40vh] flex-col bg-black text-white transition-transform duration-300 px-10",
+          "py-12 fixed inset-y-0 left-0 z-50 flex xl:w-[30vh] 2xl:w-[40vh] flex-col bg-black text-white transition-transform duration-300 px-4 2xl:px-10",
           isMobile && !isOpen && "-translate-x-full"
         )}
       >
