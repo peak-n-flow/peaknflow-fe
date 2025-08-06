@@ -19,19 +19,18 @@ export default function ContactPage() {
         <div className="flex flex-col gap-8">
           <h3 className="text-h6">OUR SOCIAL</h3>
           <div className="flex flex-col gap-6 text-h1 md:text-display-sm">
-            <span>Instagram</span>
-            <span>Tiktok</span>
-            <span>Youtube</span>
+            <a href="https://www.instagram.com/peaknflow.id/" target="_blank" rel="noopener noreferrer">Instagram</a>
+            <a href="https://www.tiktok.com/@peaknflow.id" target="_blank" rel="noopener noreferrer">Tiktok</a>
           </div>
         </div>
         <div className="flex flex-col gap-10 md:gap-20">
           <div className="flex flex-col gap-8">
             <h3 className="text-h6">MONDAY-SUNDAY, 08:00-17.00</h3>
-            <span className="text-h1 md:text-display-sm">P&Flow@gmail.com</span>
+            <span className="text-h1 md:text-display-sm">peaknflow.id@gmail.com</span>
           </div>
           <div className="flex flex-col gap-8">
             <h3 className="text-h6">We respond within a few hours</h3>
-            <span className="text-h1 md:text-display-sm">+6282131938580</span>
+            <a className="text-h1 md:text-display-sm" href="https://wa.me/6281259140892" target="_blank" rel="noopener noreferrer">+6281259140892</a>
           </div>
         </div>
         <span className="max-w-96">
